@@ -4,7 +4,7 @@ A top-down 2D naval shooter for the browser. Sail between islands, sink Chasers 
 
 Built with React 19, TypeScript (strict), PixiJS 8, TanStack Query 5, Axios, MSW 2 and Playwright.
 
-- Live build: _deployment URL goes here_
+- Live build: https://pirate-battle-nine.vercel.app/
 - Architecture notes: [ARCHITECTURE.md](ARCHITECTURE.md)
 - Performance report: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 - Network scenarios: [src/mocks/README.md](src/mocks/README.md)
