@@ -3,6 +3,7 @@ import type { ControlAction, ControlState } from '@/game/input/controls';
 import type { MessageKey } from '@/i18n';
 import { TEST_IDS } from '@/testing/testIds';
 import { TouchButton } from '@/ui';
+import { useMediaQuery } from '@/app/useMediaQuery';
 import './TouchControls.css';
 
 export interface TouchControlsProps {
@@ -34,7 +35,11 @@ const RIGHT_CLUSTER: TouchSpec[] = [
   },
 ];
 
+const NARROW_QUERY = '(max-width: 520px)';
+
 export function TouchControls({ controls, disabled }: TouchControlsProps): React.JSX.Element {
+  const narrow = useMediaQuery(NARROW_QUERY);
+  const size = narrow ? 46 : 60;
   const { t } = useTranslation();
   const render = (spec: TouchSpec): React.JSX.Element => (
     <TouchButton
@@ -43,7 +48,7 @@ export function TouchControls({ controls, disabled }: TouchControlsProps): React
       label={t(spec.label)}
       testId={spec.testId}
       disabled={disabled}
-      size={60}
+      size={size}
       onPress={() => controls.press(spec.action)}
       onRelease={() => controls.release(spec.action)}
     />

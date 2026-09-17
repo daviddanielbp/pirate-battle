@@ -2,10 +2,6 @@ export const en = {
   'common.mainMenu': 'Main menu',
   'common.tryAgain': 'Try again',
 
-  'splash.tagline': 'A top-down naval shooter',
-  'splash.start': 'Start',
-  'splash.hint': 'Press Start to set sail',
-
   'menu.label': 'Main menu',
   'menu.tagline': 'Set sail. Take command.',
   'menu.play': 'Play',
@@ -163,8 +159,6 @@ export const en = {
   'log.nextPage': 'Next page',
   'log.pageOf': 'Page {page} of {total}',
 
-  'battle.rotateTitle': 'Rotate your device',
-  'battle.rotateCopy': 'Pirate Battle plays in landscape. The battle stays paused until you rotate.',
   'battle.unavailableTitle': 'Battle unavailable',
   'battle.unavailableCopy': 'The arena could not be started on this device.',
   'battle.paused': 'Battle paused.',

@@ -1,3 +1,33 @@
+## Solution
+
+Live game: https://pirate-battle-nine.vercel.app/ · Source: https://github.com/daviddanielbp/pirate-battle
+
+The brief below is kept unchanged. The solution is documented in:
+
+- [SOLUTION.md](SOLUTION.md) — setup, environment variables, controls, gameplay configuration, network scenarios (selection, reset and how to reproduce failures), commands and deployment.
+- [ARCHITECTURE.md](ARCHITECTURE.md) — React/PixiJS integration, simulation loop, collisions, resource management, local persistence, ranking and history integration, limitations and balancing.
+- [EXTRAS.md](EXTRAS.md) — optional additions (random arenas, mouse steering, Shipyard progression, interface languages). They are extras on top of the required behavior: every default matches the brief and no rule was changed.
+- [docs/PERFORMANCE.md](docs/PERFORMANCE.md) and [docs/reports/](docs/reports/) — performance profile and the Playwright HTML report.
+- [docs/DEVELOPMENT_NOTES.md](docs/DEVELOPMENT_NOTES.md) — how the project was built and verified.
+
+Quick start (Node.js 20+, pnpm 10):
+
+```bash
+pnpm install
+pnpm exec playwright install chromium   # only for the end-to-end suite
+pnpm dev          # http://localhost:5173
+pnpm build        # type-check + optimized build in dist/
+pnpm preview      # serve the build on http://localhost:4173
+pnpm lint         # ESLint
+pnpm typecheck    # tsc
+pnpm test:e2e     # Playwright (desktop + mobile Chromium, builds and serves the app itself)
+pnpm test:report  # open the last HTML report
+```
+
+Environment variables are optional (`.env.example`): `VITE_API_BASE_URL` (empty so MSW intercepts `/api`) and `VITE_PLAYER_NAME`. Keyboard: `W`/`↑` sail, `A`/`D` or `←`/`→` turn, `Space` front cannon, `Q`/`E` broadsides, `Esc`/`P` pause; touch buttons on mobile (landscape). Network scenarios: **Network simulator** in the main menu or `?scenario=<id>`; **Reset** restores the initial state.
+
+---
+
 # Desafio React & Pixi JS — Pirate Battle
 
 Desenvolva um **shooter naval 2D com visão superior** usando React, TypeScript e PixiJS. O jogador deve navegar entre ilhas, enfrentar navios inimigos e acumular pontos até o fim da partida.

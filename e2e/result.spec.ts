@@ -99,7 +99,7 @@ test.describe('Result screen', () => {
 
     await page.reload();
     await expect(byTestId(page, TEST_IDS.screenResult)).toBeVisible();
-    await expect(byTestId(page, TEST_IDS.screenSplash)).toHaveCount(0);
+    await expect(byTestId(page, TEST_IDS.screenMenu)).toHaveCount(0);
     await expect(page.getByRole('heading', { level: 1, name: 'Battle Complete' })).toBeVisible();
     await expect(byTestId(page, TEST_IDS.resultScore)).toHaveText(String(finalState.score));
     await expect(byTestId(page, TEST_IDS.resultTime)).toHaveText('01:00');
@@ -114,7 +114,7 @@ test.describe('Result screen', () => {
     expect(await readStorage<string>(page, STORAGE.screen)).toBeNull();
 
     await page.reload();
-    await expect(byTestId(page, TEST_IDS.screenSplash)).toBeVisible();
+    await expect(byTestId(page, TEST_IDS.screenMenu)).toBeVisible();
     await expect(byTestId(page, TEST_IDS.screenResult)).toHaveCount(0);
   });
 

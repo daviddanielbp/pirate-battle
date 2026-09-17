@@ -14,4 +14,3 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const COARSE_POINTER_QUERY = '(pointer: coarse)';
-export const PORTRAIT_PHONE_QUERY = '(orientation: portrait) and (max-width: 900px)';

@@ -1,7 +1,5 @@
 export const TEST_IDS = {
   app: 'app-root',
-  screenSplash: 'screen-splash',
-  splashStart: 'splash-start',
   screenMenu: 'screen-menu',
   screenOptions: 'screen-options',
   screenLoading: 'screen-loading',
@@ -87,7 +85,6 @@ export const TEST_IDS = {
   networkLabApply: 'network-lab-apply',
   networkLabReset: 'network-lab-reset',
   networkLabClose: 'network-lab-close',
-  orientationHint: 'orientation-hint',
   confirmDialog: 'confirm-dialog',
   confirmAccept: 'confirm-accept',
   confirmCancel: 'confirm-cancel',

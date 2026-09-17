@@ -67,7 +67,6 @@ test.describe('Steering options', () => {
     });
 
     await page.reload();
-    await byTestId(page, TEST_IDS.splashStart).click();
     await byTestId(page, TEST_IDS.menuOptions).click();
     await expect(byTestId(page, TEST_IDS.optionsSteering)).toHaveValue('mouse');
     await expect(byTestId(page, TEST_IDS.optionsSession)).toHaveAttribute('aria-valuenow', '90');

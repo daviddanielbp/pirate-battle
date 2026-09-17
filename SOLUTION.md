@@ -62,7 +62,7 @@ The ranking and match history APIs are fully simulated by MSW in every environme
 
 With `Options → Steering → Mouse` the ship turns toward the cursor (rate-limited by the same rotation speed) and sails while the left mouse button or `W` is held; cannons keep their keys. See [EXTRAS.md](EXTRAS.md).
 
-Movement and firing can be held simultaneously. Keys are only captured while a battle is running; menus and dialogs keep normal keyboard behavior. Touch controls appear automatically on coarse-pointer devices (or with `?touch=1`). Mobile is supported in **landscape**; in portrait the battle pauses and asks you to rotate the device.
+Movement and firing can be held simultaneously. Keys are only captured while a battle is running; menus and dialogs keep normal keyboard behavior. Touch controls appear automatically on coarse-pointer devices (or with `?touch=1`). Mobile works in both orientations: in portrait the arena is rotated 90° so it stays fully visible, and the touch controls keep their corners.
 
 The battle also pauses automatically when the window loses focus or the tab is hidden. Resuming always requires pressing **Resume**.
 
@@ -137,6 +137,8 @@ pnpm test:report         # HTML report in playwright-report/
 ```
 
 Each test retries once on failure (the report marks such runs as flaky); traces and screenshots are kept for failures. Visual baselines live in `e2e/__screenshots__/`.
+
+The suite also runs an accessibility audit (`e2e/accessibility.spec.ts`, axe-core with the WCAG 2.0/2.1 A and AA rule sets) over the main menu, Options, Shipyard, both Captain's Log tabs, the battle with touch controls, the pause and network dialogs and the result screen, and fails on any serious or critical violation.
 
 ## Deployment
 

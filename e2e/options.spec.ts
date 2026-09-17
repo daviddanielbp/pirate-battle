@@ -26,7 +26,6 @@ test.describe('Options', () => {
     await expect(page.getByText('Options saved.')).toBeVisible();
 
     await page.reload();
-    await byTestId(page, TEST_IDS.splashStart).click();
     await byTestId(page, TEST_IDS.menuOptions).click();
     await expect(byTestId(page, TEST_IDS.optionsSession)).toHaveAttribute('aria-valuenow', '180');
     await expect(byTestId(page, TEST_IDS.optionsSpawn)).toHaveAttribute('aria-valuenow', '2');
@@ -56,7 +55,6 @@ test.describe('Options', () => {
     await openMenu(page);
     await page.evaluate((key) => localStorage.setItem(key, JSON.stringify({ sessionSeconds: 999, spawnIntervalSeconds: 0 })), STORAGE.options);
     await page.reload();
-    await byTestId(page, TEST_IDS.splashStart).click();
     await byTestId(page, TEST_IDS.menuOptions).click();
     await expect(byTestId(page, TEST_IDS.optionsSession)).toHaveAttribute('aria-valuenow', '120');
     await expect(byTestId(page, TEST_IDS.optionsSpawn)).toHaveAttribute('aria-valuenow', '3');

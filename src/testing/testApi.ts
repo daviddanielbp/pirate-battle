@@ -9,6 +9,7 @@ export interface PerfReport {
   maxFrameMs: number;
   averageEntities: number;
   maxEntities: number;
+  frameTimes: number[];
 }
 
 export interface BattleTestApi {

@@ -31,14 +31,13 @@ import { LogScreen } from '@/ui/pages/LogScreen';
 import { MenuScreen } from '@/ui/pages/MenuScreen';
 import { OptionsScreen } from '@/ui/pages/OptionsScreen';
 import { ResultScreen } from '@/ui/pages/ResultScreen';
-import { SplashScreen } from '@/ui/pages/SplashScreen';
 import { ShipyardScreen } from '@/ui/pages/ShipyardScreen';
 
 const flags = readRuntimeFlags();
 if (flags.instrumentation) installTestApi();
 
 function initialScreen(): Screen {
-  return wasResultScreenOpen() && getLastResult() ? { name: 'result' } : { name: 'splash' };
+  return wasResultScreenOpen() && getLastResult() ? { name: 'result' } : { name: 'menu' };
 }
 
 export function App(): React.JSX.Element {
@@ -86,8 +85,6 @@ export function App(): React.JSX.Element {
 
   const content = useMemo(() => {
     switch (screen.name) {
-      case 'splash':
-        return <SplashScreen onStart={goToMenu} />;
       case 'menu':
         return (
           <MenuScreen

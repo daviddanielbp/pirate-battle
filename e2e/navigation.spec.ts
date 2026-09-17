@@ -88,19 +88,16 @@ test.describe('Abandoning a battle', () => {
     await expectEmptyHistory(page);
   });
 
-  test('a reload during a battle boots to the splash and the match is discarded', async ({ page }) => {
+  test('a reload during a battle boots to the menu and the match is discarded', async ({ page }) => {
     await startBattle(page);
     await advance(page, 3000);
     expect((await battleState(page)).elapsedSeconds).toBeGreaterThan(2.9);
 
     await page.reload();
-    await expect(byTestId(page, TEST_IDS.screenSplash)).toBeVisible();
+    await expect(byTestId(page, TEST_IDS.screenMenu)).toBeVisible();
     await expect(byTestId(page, TEST_IDS.screenBattle)).toHaveCount(0);
     await expect(byTestId(page, TEST_IDS.screenResult)).toHaveCount(0);
     expect(await page.evaluate(() => window.__pirateBattle?.hasBattle() ?? false)).toBe(false);
-
-    await byTestId(page, TEST_IDS.splashStart).click();
-    await expect(byTestId(page, TEST_IDS.screenMenu)).toBeVisible();
     await expect(page.getByText('waiting to be recorded')).toHaveCount(0);
     await expectNothingRecorded(page);
     await expectEmptyHistory(page);
@@ -299,32 +296,33 @@ test.describe('Touch controls', () => {
 });
 
 test.describe('Orientation', () => {
-  test('portrait shows the rotate hint and pauses, landscape restores the pause dialog', async ({ page }, testInfo) => {
+  test('portrait keeps the whole arena visible by rotating the world and the battle keeps running', async ({ page }, testInfo) => {
     test.skip(testInfo.project.name !== 'mobile', 'Portrait handling applies to the mobile project only');
     await startBattle(page, { touch: true });
-    await expect(byTestId(page, TEST_IDS.orientationHint)).toHaveCount(0);
     await advance(page, 500);
     const before = await battleState(page);
     expect(before.status).toBe('running');
+    expect(before.viewport?.rotated).toBe(false);
 
     await page.setViewportSize({ width: 393, height: 851 });
-    await expect(byTestId(page, TEST_IDS.orientationHint)).toBeVisible();
-    await expect(byTestId(page, TEST_IDS.pauseDialog)).toHaveCount(0);
-    await expect(byTestId(page, TEST_IDS.hudStatus)).toContainText('Paused');
-    const paused = await battleState(page);
-    expect(paused.status).toBe('paused');
+    await expect.poll(async () => (await battleState(page)).viewport?.rotated).toBe(true);
+    const portrait = await battleState(page);
+    expect(portrait.status).toBe('running');
+    const viewport = portrait.viewport;
+    expect(viewport).not.toBeNull();
+    if (viewport) {
+      expect(viewport.height).toBeGreaterThan(viewport.width);
+      expect(portrait.arena.height * viewport.scale).toBeLessThanOrEqual(viewport.width + 1);
+      expect(portrait.arena.width * viewport.scale).toBeLessThanOrEqual(viewport.height + 1);
+    }
     await advance(page, 1000);
-    expect((await battleState(page)).elapsedSeconds).toBe(paused.elapsedSeconds);
+    expect((await battleState(page)).elapsedSeconds).toBeCloseTo(before.elapsedSeconds + 1, 1);
+    await expect(byTestId(page, TEST_IDS.hudPause)).toBeVisible();
+    await expect(byTestId(page, TEST_IDS.touchFireFront)).toBeVisible();
+    await expect(byTestId(page, TEST_IDS.hudStatus)).toContainText('In battle');
 
     await page.setViewportSize({ width: 851, height: 393 });
-    await expect(byTestId(page, TEST_IDS.orientationHint)).toHaveCount(0);
-    await expect(byTestId(page, TEST_IDS.pauseDialog)).toBeVisible();
-    expect((await battleState(page)).status).toBe('paused');
-
-    await byTestId(page, TEST_IDS.pauseResume).click();
-    await expect(byTestId(page, TEST_IDS.pauseDialog)).toHaveCount(0);
+    await expect.poll(async () => (await battleState(page)).viewport?.rotated).toBe(false);
     expect((await battleState(page)).status).toBe('running');
-    await advance(page, 500);
-    expect((await battleState(page)).elapsedSeconds).toBeCloseTo(paused.elapsedSeconds + 0.5, 1);
   });
 });

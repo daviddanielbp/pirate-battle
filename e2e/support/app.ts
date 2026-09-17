@@ -58,12 +58,11 @@ export async function openApp(page: Page, options: AppOptions = {}): Promise<voi
     { keys: STORAGE, playerOptions: options.options ?? null, progress: options.progress ?? null },
   );
   await page.goto(appUrl(options));
-  await expect(byTestId(page, TEST_IDS.screenSplash)).toBeVisible();
+  await expect(byTestId(page, TEST_IDS.screenMenu)).toBeVisible();
 }
 
 export async function openMenu(page: Page, options: AppOptions = {}): Promise<void> {
   await openApp(page, options);
-  await byTestId(page, TEST_IDS.splashStart).click();
   await expect(byTestId(page, TEST_IDS.screenMenu)).toBeVisible();
 }
 

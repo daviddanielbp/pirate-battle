@@ -56,9 +56,9 @@ Score, time and the player's health bar are drawn in PixiJS from the provided HU
 
 Screens and dialogs fade and rise into place, the result screen celebrates a survived battle with a banner and an animated score, and it links straight to the Shipyard so rewards can be spent immediately. Motion is disabled when the system asks for reduced motion.
 
-## Sound options and start screen
+## Sound options
 
-Options also hold volume and mute. A start screen with a pulsing button precedes the main menu; besides presentation, the click unlocks the browser's audio context so sound effects can play from the first menu interaction.
+Options also hold volume and mute. The browser's audio context is unlocked by the first click or key press on the main menu, so sound effects play from the first battle onward.
 
 ## Interface languages
 

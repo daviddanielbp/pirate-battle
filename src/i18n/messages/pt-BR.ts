@@ -4,10 +4,6 @@ export const ptBR: Record<MessageKey, string> = {
   'common.mainMenu': 'Menu principal',
   'common.tryAgain': 'Tentar novamente',
 
-  'splash.tagline': 'Um jogo naval de tiro com visão de cima',
-  'splash.start': 'Começar',
-  'splash.hint': 'Pressione Começar para zarpar',
-
   'menu.label': 'Menu principal',
   'menu.tagline': 'Ice as velas. Assuma o comando.',
   'menu.play': 'Jogar',
@@ -166,8 +162,6 @@ export const ptBR: Record<MessageKey, string> = {
   'log.nextPage': 'Próxima página',
   'log.pageOf': 'Página {page} de {total}',
 
-  'battle.rotateTitle': 'Gire seu dispositivo',
-  'battle.rotateCopy': 'Pirate Battle é jogado na horizontal. A batalha fica pausada até você girar a tela.',
   'battle.unavailableTitle': 'Batalha indisponível',
   'battle.unavailableCopy': 'Não foi possível iniciar a arena neste dispositivo.',
   'battle.paused': 'Batalha pausada.',

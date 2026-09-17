@@ -22,7 +22,10 @@ These were found by playing the game in the browser and were fixed before delive
 | A water-splash sound played for every cannonball that simply expired | Sound only on island hits; expiry in open water is silent |
 | Transient confirmations ("scenario applied", "options saved", purchases) pushed the buttons around inside dialogs | Toast system in the top-right corner above every layer, sliding in from the right |
 | Screen changes were abrupt and surviving a battle looked the same as losing | Screen and dialog transitions; victory banner, animated score and a Shipyard shortcut on the result screen |
+| Portrait phones paused the game and asked to rotate | The world container is rotated 90° in portrait so the whole arena stays visible; pointer input maps through the same transform |
+| A start screen had been added before the main menu; the brief describes the main menu as the entry screen | Removed so the main menu is the first screen, exactly as specified |
 | The volume label read "80 percent" | Number only |
+| Taking damage had little feedback beyond the health bar, and cannon readiness was invisible | Short camera shake when the player is hit or rammed; cooldown bars for the three cannons in the HUD |
 
 ## Problems found in code review and automated testing
 
@@ -49,8 +52,8 @@ A structured review of the codebase (five perspectives: rules, runtime, React, d
 ## Verification before delivery
 
 - `pnpm lint`, `pnpm typecheck` and `pnpm build` clean.
-- 188 Playwright tests passing on the production build, desktop and mobile Chromium, with committed visual baselines (report in `reports/playwright-report`).
-- Performance profile of a full three-minute battle and five start/play/leave cycles (`PERFORMANCE.md`).
+- The full Playwright suite passing on the production build, desktop and mobile Chromium, with committed visual baselines and an axe-core accessibility audit of every screen (report in `reports/playwright-report`).
+- Performance profile of a full three-minute battle and five start/play/leave cycles, with a screenshot, frame-time and memory charts as evidence (`PERFORMANCE.md`, `reports/`).
 - The published build was smoke-tested after deployment: menu, ranking served by MSW, a battle start, no console errors.
 
 ## Decisions

@@ -1,4 +1,4 @@
-import { Application, type Ticker } from 'pixi.js';
+import { Application, Container, Point, type Ticker } from 'pixi.js';
 import type { GameplayConfig } from './config/gameplayConfig';
 import { ARENA_HEIGHT, ARENA_WIDTH, type ArenaDefinition } from './core/arena';
 import type { EndReason, Projectile, Ship, SimulationEvent } from './core/entities';
@@ -10,7 +10,7 @@ import { HudLayer } from './render/hudLayer';
 import { DEFAULT_APPEARANCE, type FleetAppearance } from './render/constants';
 import type { KillCount } from './progression/progression';
 import type { RoundedRect } from './core/arena';
-import { fitStage, type StageFit } from './render/stageFitter';
+import { fitWorld, type StageFit } from './render/stageFitter';
 import type { AudioEngine } from './audio/audioEngine';
 import { BattleAudio } from './audio/battleAudio';
 
@@ -60,6 +60,7 @@ export interface DebugState {
   cooldowns: Ship['cooldowns'];
   kills: KillCount;
   arena: { width: number; height: number; obstacles: RoundedRect[] };
+  viewport: StageFit | null;
 }
 
 export interface BattleRuntimeOptions {
@@ -84,6 +85,7 @@ export class BattleRuntime {
   private readonly battleAudio: BattleAudio;
   private app: Application | null = null;
   private renderer: BattleRenderer | null = null;
+  private readonly world = new Container();
   private hud: HudLayer | null = null;
   private fit: StageFit | null = null;
   private status: RuntimeStatus = 'booting';
@@ -130,7 +132,8 @@ export class BattleRuntime {
       this.options.appearance ?? DEFAULT_APPEARANCE,
     );
     this.hud = new HudLayer(this.options.atlases.ui);
-    app.stage.addChild(this.renderer.root);
+    this.world.addChild(this.renderer.root);
+    app.stage.addChild(this.world);
     app.stage.addChild(this.hud.root);
     this.applyFit();
     app.renderer.on('resize', this.onResize);
@@ -162,9 +165,8 @@ export class BattleRuntime {
     const fit = this.fit;
     if (!app || !fit) return null;
     const bounds = app.canvas.getBoundingClientRect();
-    const localX = clientX - bounds.left;
-    const localY = clientY - bounds.top;
-    return { x: (localX - fit.offsetX) / fit.scale, y: (localY - fit.offsetY) / fit.scale };
+    const local = this.world.toLocal(new Point(clientX - bounds.left, clientY - bounds.top));
+    return { x: local.x, y: local.y };
   }
 
   setClockMode(mode: ClockMode): void {
@@ -260,6 +262,7 @@ export class BattleRuntime {
         height: simulation.geometry.height,
         obstacles: simulation.geometry.obstacles.map((rect) => ({ ...rect })),
       },
+      viewport: this.fit ? { ...this.fit } : null,
     };
   }
 
@@ -280,6 +283,7 @@ export class BattleRuntime {
       this.renderer = null;
       this.hud?.destroy();
       this.hud = null;
+      this.world.destroy({ children: true });
       if (app.canvas.parentNode) app.canvas.parentNode.removeChild(app.canvas);
       app.destroy({ removeView: true }, { children: true, texture: false });
     }
@@ -296,21 +300,26 @@ export class BattleRuntime {
   private applyFit(): void {
     const app = this.app;
     if (!app) return;
-    this.fit = fitStage(app, ARENA_WIDTH, ARENA_HEIGHT);
-    const hud = this.hud;
-    if (!hud) return;
-    hud.root.scale.set(1 / this.fit.scale);
-    hud.root.position.set(-this.fit.offsetX / this.fit.scale, -this.fit.offsetY / this.fit.scale);
-    hud.layout(this.fit.width, this.fit.height);
+    this.fit = fitWorld(app, this.world, ARENA_WIDTH, ARENA_HEIGHT);
+    this.hud?.layout(this.fit.width, this.fit.height);
   }
 
   private syncHud(): void {
     const summary = this.simulation.summary();
-    this.hud?.update(
+    const hud = this.hud;
+    if (!hud) return;
+    hud.update(
       summary.score,
       Math.ceil(summary.remainingSeconds - 1e-6),
       Math.round(summary.playerHealth),
       summary.playerMaxHealth,
+    );
+    const player = this.simulation.player;
+    const weapons = this.options.config.player;
+    hud.updateCooldowns(
+      1 - player.cooldowns.front / weapons.frontCannon.cooldownSeconds,
+      1 - player.cooldowns.left / weapons.broadside.cooldownSeconds,
+      1 - player.cooldowns.right / weapons.broadside.cooldownSeconds,
     );
   }
 

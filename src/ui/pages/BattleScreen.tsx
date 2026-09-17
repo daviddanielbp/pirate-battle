@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from '
 import { useAppAudio } from '@/app/audioContext';
 import { useTranslation } from '@/app/useTranslation';
 import type { MatchSession } from '@/app/matchSession';
-import { COARSE_POINTER_QUERY, PORTRAIT_PHONE_QUERY, useMediaQuery } from '@/app/useMediaQuery';
+import { COARSE_POINTER_QUERY, useMediaQuery } from '@/app/useMediaQuery';
 import { BattleRuntime, type ClockMode, type HudSnapshot } from '@/game/battleRuntime';
 import { getLoadedAtlases } from '@/game/assets/loader';
 import type { EndReason } from '@/game/core/entities';
@@ -63,7 +63,6 @@ export function BattleScreen({ session, clock, forceTouch, onEnded, onShowResult
   const { engine } = useAppAudio();
   const { t } = useTranslation();
   const coarsePointer = useMediaQuery(COARSE_POINTER_QUERY);
-  const portraitPhone = useMediaQuery(PORTRAIT_PHONE_QUERY);
 
   useEffect(() => {
     endedRef.current = onEnded;
@@ -148,10 +147,6 @@ export function BattleScreen({ session, clock, forceTouch, onEnded, onShowResult
     return () => window.clearTimeout(timer);
   }, [runtime, snapshot]);
 
-  useEffect(() => {
-    if (portraitPhone && runtime) runtime.pause('manual');
-  }, [portraitPhone, runtime]);
-
   const pause = useCallback(() => runtime?.pause('manual'), [runtime]);
   const resume = useCallback(() => runtime?.resume(), [runtime]);
   const announcement = describeBattlePhase(t, snapshot);
@@ -167,21 +162,11 @@ export function BattleScreen({ session, clock, forceTouch, onEnded, onShowResult
       )}
       {runtime && (
         <PauseDialog
-          open={snapshot.status === 'paused' && !portraitPhone}
+          open={snapshot.status === 'paused'}
           reason={snapshot.pauseReason}
           onResume={resume}
           onAbandon={() => abandonRef.current()}
         />
-      )}
-      {portraitPhone && (
-        <div className="battle-orientation" role="alert" data-testid={TEST_IDS.orientationHint}>
-          <Panel size="compact" title={t('battle.rotateTitle')}>
-            <p className="battle-orientation-copy">{t('battle.rotateCopy')}</p>
-            <Button variant="secondary" size="small" onClick={() => abandonRef.current()}>
-              {t('common.mainMenu')}
-            </Button>
-          </Panel>
-        </div>
       )}
       {failure && (
         <div className="battle-orientation" role="alert">

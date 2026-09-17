@@ -8,6 +8,7 @@ import { EffectsLayer } from './effectsLayer';
 import { ProjectileLayer } from './projectileLayer';
 import { ShipView } from './shipView';
 import type { FleetAppearance } from './constants';
+import { createRandom } from '../core/rng';
 
 export class BattleRenderer {
   readonly root = new Container();
@@ -20,6 +21,9 @@ export class BattleRenderer {
   private readonly headings = new Map<number, number>();
   private readonly appearance: FleetAppearance;
   private sceneTime = 0;
+  private shakeRemaining = 0;
+  private shakeStrength = 0;
+  private readonly shakeRandom = createRandom(11);
 
   constructor(
     renderer: Renderer,
@@ -72,6 +76,7 @@ export class BattleRenderer {
         case 'hit':
           this.effects.hitSpark(event.x, event.y);
           this.shipViews.get(event.shipId)?.flash();
+          if (event.kind === 'player') this.shake(0.22, 6);
           break;
         case 'destroyed':
           this.effects.explosion(event.x, event.y, event.kind, this.headings.get(event.shipId) ?? 0, 1);
@@ -79,6 +84,7 @@ export class BattleRenderer {
           break;
         case 'chaser_impact':
           this.effects.explosion(event.x, event.y, 'chaser', 0, 1.25);
+          this.shake(0.35, 12);
           break;
         case 'splash':
           this.effects.splash(event.x, event.y);
@@ -100,9 +106,30 @@ export class BattleRenderer {
     this.arenaLayer.animate(this.sceneTime);
     this.effects.update(dt);
     for (const view of this.shipViews.values()) view.animate(dt);
+    this.animateShake(dt);
+  }
+
+  private shake(seconds: number, strength: number): void {
+    this.shakeRemaining = Math.max(this.shakeRemaining, seconds);
+    this.shakeStrength = Math.max(this.shakeStrength, strength);
+  }
+
+  private animateShake(dt: number): void {
+    if (this.shakeRemaining <= 0) {
+      if (this.root.x !== 0 || this.root.y !== 0) this.root.position.set(0, 0);
+      return;
+    }
+    this.shakeRemaining = Math.max(0, this.shakeRemaining - dt);
+    const falloff = this.shakeRemaining === 0 ? 0 : this.shakeRemaining / 0.35;
+    const amplitude = this.shakeStrength * Math.min(1, falloff);
+    this.root.position.set(this.shakeRandom.range(-amplitude, amplitude), this.shakeRandom.range(-amplitude, amplitude));
+    if (this.shakeRemaining === 0) this.shakeStrength = 0;
   }
 
   reset(): void {
+    this.shakeRemaining = 0;
+    this.shakeStrength = 0;
+    this.root.position.set(0, 0);
     for (const view of this.shipViews.values()) {
       this.shipLayer.removeChild(view);
       view.destroy();

@@ -19,7 +19,7 @@ src/
     molecules/  Panel, Stepper, Tabs, Pagination, DataTable, HullSprite, TouchButton
     organisms/  Dialog, ToastProvider, Hud, TouchControls, PauseDialog, OptionsForm, NetworkLabDialog
     templates/  SceneBackground, ScreenTemplate
-    pages/      Splash, Menu, Options, Shipyard, Loading, Battle, Result, Captain's Log
+    pages/      Menu, Options, Shipyard, Loading, Battle, Result, Captain's Log
     shared/     icon and asset URL maps, focus helpers
   i18n/       typed message dictionaries (English source of truth) and the translate helper
   data/       Axios client, contracts, TanStack Query hooks, pending submissions
@@ -32,9 +32,9 @@ src/
 
 `BattleScreen` mounts a host `<div>` and creates one `BattleRuntime` per match inside `useEffect`. The runtime creates the Pixi `Application` asynchronously; if the effect is cleaned up before `init` resolves (React Strict Mode does exactly this), the `disposed` flag makes the runtime destroy the application as soon as it exists instead of attaching it. Cleanup removes the ticker callback, the resize listener, window `blur`/`visibilitychange` listeners, keyboard listeners, every sprite and generated texture, and finally the canvas. Atlas textures are shared across matches and stay cached in `Assets`, so restarting never re-downloads or re-uploads them.
 
-The canvas uses `resizeTo` the host element with `resolution = min(devicePixelRatio, 2)` and `autoDensity`. `fitStage` scales the stage uniformly to fit the 1856×1024 arena inside the canvas (letterboxed, never stretched) and centers it; the world is padded with water and a boundary line so the playable limits are always visible. Keyboard and touch input never depend on canvas coordinates; the optional mouse steering maps pointer positions back to arena space with the inverse of the same letterbox transform (`BattleRuntime.toArenaPoint`).
+The canvas uses `resizeTo` the host element with `resolution = min(devicePixelRatio, 2)` and `autoDensity`. `fitWorld` scales a world container uniformly to fit the 1856×1024 arena inside the canvas (letterboxed, never stretched) and centers it; the world is padded with water and a boundary line so the playable limits are always visible. Keyboard and touch input never depend on canvas coordinates; the optional mouse steering maps pointer positions back to arena space with the inverse of the same letterbox transform (`BattleRuntime.toArenaPoint`).
 
-The in-canvas HUD (score, time, health bar) is a Pixi layer placed in screen space over the letterboxed stage. The React layer holds the pause button and a visually hidden semantic copy of the same values. The runtime publishes a `HudSnapshot` (status, score, whole seconds left, health, enemy count) through a subscribe/getSnapshot pair consumed with `useSyncExternalStore`, and it only notifies when a field actually changes. In practice React re-renders about once per second plus on hits, never per frame. The same snapshot feeds the semantic status region and the polite live region, which announces phase changes only (started, 30 s, 10 s, paused, ended).
+The in-canvas HUD (score, time, health bar, cannon cooldown bars) is a Pixi layer placed in screen space over the letterboxed stage; it switches to a stacked layout on narrow screens. The React layer holds the pause button and a visually hidden semantic copy of the same values. The runtime publishes a `HudSnapshot` (status, score, whole seconds left, health, enemy count) through a subscribe/getSnapshot pair consumed with `useSyncExternalStore`, and it only notifies when a field actually changes. In practice React re-renders about once per second plus on hits, never per frame. The same snapshot feeds the semantic status region and the polite live region, which announces phase changes only (started, 30 s, 10 s, paused, ended).
 
 ## Simulation loop
 
@@ -50,7 +50,7 @@ The in-canvas HUD (score, time, health bar) is a Pixi layer placed in screen spa
 
 Randomness comes from a seeded `mulberry32` generator (`?seed=` fixes it in tests), so the same inputs produce the same match. The runtime has two clock modes: `auto` (Pixi ticker drives `advance`) and `manual` (only the test API advances time), which is how the E2E suite controls the clock while keeping the real rules, inputs, collisions and rendering.
 
-Pausing (manual, on window blur, on hidden tab, or in portrait on phones) stops stepping, clears the held controls and the accumulator, and suspends the audio context. Resuming clears the controls again, so nothing pressed during the pause is ever applied and no time is caught up.
+Pausing (manual, on window blur or on hidden tab) stops stepping, clears the held controls and the accumulator, and silences the battle loops. Resuming clears the controls again, so nothing pressed during the pause is ever applied and no time is caught up.
 
 ## Arena generation
 
@@ -97,7 +97,7 @@ MSW handlers implement the four endpoints on top of an in-browser database (fixt
 
 - Arenas are generated per match; enemy spawn points are sampled randomly within them and validated against islands, other ships and the player distance.
 - Ships collide as capsules rather than pixel-accurate hulls; sails may visually overlap an island edge by a few pixels.
-- Mobile is supported in landscape only. Portrait pauses the match and asks to rotate.
+- Both orientations are supported on mobile. In portrait the world container is rotated 90° so the whole arena stays visible with the same rules; HUD and touch controls stay in screen space.
 - Progression (extras) multiplies these values at match start through `applyLoadout`; the loadout is stored with each match record, while the ranking key remains session time + spawn interval as required.
 - Default balance: player 100 HP, 205 px/s; Chaser 50 HP, 150 px/s, 20 contact damage; Shooter 80 HP, 105 px/s, 8 damage per shot at 400 px range; front cannon 40 damage / 0.4 s; broadside 3 × 25 damage / 1.2 s. These values sit in `DEFAULT_GAMEPLAY_CONFIG` and can be changed without touching systems.
 - Audio uses AAC files converted from the provided WAVs; browsers without Web Audio simply play nothing.

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="320" viewBox="0 0 960 320" font-family="Helvetica, Arial, sans-serif" font-size="12">
+<rect width="960" height="320" fill="#10233a"/>
+<text x="56" y="16" fill="#f7e9c9" font-size="14" font-weight="bold">Used JS heap after each start / play / leave cycle (after forced GC)</text>
+<rect x="85.3" y="74.5" width="88.0" height="201.5" fill="#f2c14e"/>
+<text x="129.3" y="68.5" fill="#f7e9c9" text-anchor="middle">9.94 MB</text>
+<text x="129.3" y="308" fill="#a9b7cc" text-anchor="middle">baseline</text>
+<rect x="232.0" y="67.3" width="88.0" height="208.7" fill="#f2c14e"/>
+<text x="276.0" y="61.3" fill="#f7e9c9" text-anchor="middle">10.30 MB</text>
+<text x="276.0" y="308" fill="#a9b7cc" text-anchor="middle">cycle 1</text>
+<rect x="378.7" y="63.0" width="88.0" height="213.0" fill="#f2c14e"/>
+<text x="422.7" y="57.0" fill="#f7e9c9" text-anchor="middle">10.51 MB</text>
+<text x="422.7" y="308" fill="#a9b7cc" text-anchor="middle">cycle 2</text>
+<rect x="525.3" y="61.0" width="88.0" height="215.0" fill="#f2c14e"/>
+<text x="569.3" y="55.0" fill="#f7e9c9" text-anchor="middle">10.61 MB</text>
+<text x="569.3" y="308" fill="#a9b7cc" text-anchor="middle">cycle 3</text>
+<rect x="672.0" y="58.1" width="88.0" height="217.9" fill="#f2c14e"/>
+<text x="716.0" y="52.1" fill="#f7e9c9" text-anchor="middle">10.75 MB</text>
+<text x="716.0" y="308" fill="#a9b7cc" text-anchor="middle">cycle 4</text>
+<rect x="818.7" y="56.9" width="88.0" height="219.1" fill="#f2c14e"/>
+<text x="862.7" y="50.9" fill="#f7e9c9" text-anchor="middle">10.81 MB</text>
+<text x="862.7" y="308" fill="#a9b7cc" text-anchor="middle">cycle 5</text>
+</svg>

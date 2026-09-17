@@ -3,7 +3,6 @@ import type { MatchSession } from './matchSession';
 export type LogTab = 'ranking' | 'history';
 
 export type Screen =
-  | { name: 'splash' }
   | { name: 'menu' }
   | { name: 'options' }
   | { name: 'shipyard' }
@@ -13,7 +12,6 @@ export type Screen =
   | { name: 'result' };
 
 export type ScreenAction =
-  | { type: 'splash' }
   | { type: 'menu' }
   | { type: 'options' }
   | { type: 'shipyard' }
@@ -24,8 +22,6 @@ export type ScreenAction =
 
 export function screenReducer(_state: Screen, action: ScreenAction): Screen {
   switch (action.type) {
-    case 'splash':
-      return { name: 'splash' };
     case 'menu':
       return { name: 'menu' };
     case 'options':

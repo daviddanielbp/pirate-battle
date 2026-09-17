@@ -36,6 +36,7 @@ function buildPerfReport(): PerfReport | null {
     maxFrameMs: Math.max(...perfFrames),
     averageEntities: entities / perfEntities.length,
     maxEntities: Math.max(...perfEntities),
+    frameTimes: [...perfFrames],
   };
 }
 

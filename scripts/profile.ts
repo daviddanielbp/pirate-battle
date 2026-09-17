@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { renderFrameTimesChart, renderMemoryChart } from './profileCharts';
 import { join } from 'node:path';
 import { chromium, type Page } from '@playwright/test';
 import type { PerfReport } from '../src/testing/testApi';
@@ -107,7 +108,6 @@ async function main(): Promise<void> {
   await page.goto(`${baseUrl}/?test=1&seed=profile&latency=0`);
   await page.evaluate(cleanState);
   await page.reload();
-  await page.click('[data-testid="splash-start"]');
   await page.click('[data-testid="menu-play"]');
   await waitForBattle(page);
   await page.evaluate(() => window.__pirateBattle?.startPerf());
@@ -123,6 +123,10 @@ async function main(): Promise<void> {
     await page.click('[data-testid="menu-play"]');
     await waitForBattle(page);
     await autopilot(page, cycleSeconds, false);
+    if (cycle === 1) {
+      mkdirSync(output, { recursive: true });
+      await page.screenshot({ path: join(output, 'profile-battle.png') });
+    }
     await leaveBattle(page);
     memory.push({ cycle, usedJsHeapMb: await measureHeap(page) });
   }
@@ -130,7 +134,10 @@ async function main(): Promise<void> {
   const userAgent = await page.evaluate(() => navigator.userAgent);
   await browser.close();
 
-  mkdirSync(output, { recursive: true });
+  if (perf) {
+    writeFileSync(join(output, 'frame-times.svg'), renderFrameTimesChart(perf.frameTimes));
+  }
+  writeFileSync(join(output, 'memory-cycles.svg'), renderMemoryChart(memory));
   const report = {
     generatedAt: new Date().toISOString(),
     environment: { userAgent, viewport: { width, height, deviceScaleFactor: scale }, platform: process.platform, arch: process.arch },
