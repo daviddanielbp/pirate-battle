@@ -10,6 +10,7 @@ Built with React 19, TypeScript (strict), PixiJS 8, TanStack Query 5, Axios, MSW
 - Network scenarios: [src/mocks/README.md](src/mocks/README.md)
 - Original brief: [README.md](README.md)
 - Extras beyond the brief: [EXTRAS.md](EXTRAS.md)
+- Development notes (process, review findings, verification): [docs/DEVELOPMENT_NOTES.md](docs/DEVELOPMENT_NOTES.md)
 
 ## Setup
 
@@ -76,7 +77,7 @@ The **Options** screen exposes two of those parameters and persists them in `loc
 | Game session time | 60–180 s, steps of 10 | 120 s |
 | Enemy spawn time | 1–10 s, steps of 1 | 3 s |
 
-Options also hold the steering mode, the sound volume and the mute switch. Every battle takes a snapshot of the options (and of the Shipyard loadout, see [EXTRAS.md](EXTRAS.md)) when it starts; later changes apply to the next battle only.
+Options also hold the steering mode, the interface language (English by default), the sound volume and the mute switch. Every battle takes a snapshot of the options (and of the Shipyard loadout, see [EXTRAS.md](EXTRAS.md)) when it starts; later changes apply to the next battle only.
 
 Each battle is played on a randomly generated island layout derived from the match seed; `?seed=<value>` makes it reproducible.
 
@@ -135,7 +136,7 @@ pnpm test:e2e            # runs against a fresh `pnpm preview` build
 pnpm test:report         # HTML report in playwright-report/
 ```
 
-Traces are recorded on the first retry of a failing test. Visual baselines live next to the specs in `e2e/__screenshots__/`.
+Each test retries once on failure (the report marks such runs as flaky); traces and screenshots are kept for failures. Visual baselines live in `e2e/__screenshots__/`.
 
 ## Deployment
 

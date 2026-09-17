@@ -1,4 +1,4 @@
-export const SUPPORTED_LANGUAGES = ['en', 'pt-BR', 'es', 'zh', 'fr'] as const;
+export const SUPPORTED_LANGUAGES = ['en', 'pt-BR', 'pt-PT', 'es'] as const;
 
 export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number];
 
@@ -7,9 +7,8 @@ export const DEFAULT_LANGUAGE: LanguageCode = 'en';
 export const LANGUAGE_LABELS: Readonly<Record<LanguageCode, string>> = {
   en: 'English',
   'pt-BR': 'Português (Brasil)',
+  'pt-PT': 'Português (Portugal)',
   es: 'Español',
-  zh: '中文',
-  fr: 'Français',
 };
 
 export function isLanguageCode(value: unknown): value is LanguageCode {

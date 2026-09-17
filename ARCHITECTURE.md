@@ -16,11 +16,12 @@ src/
     battleRuntime.ts  fixed-step loop, pause, clock modes, HUD snapshot store
   ui/         React interface organized by atomic design
     atoms/      Button, IconButton, Slider, Toggle, StatusMessage, ProgressBar, Kbd, VisuallyHidden
-    molecules/  Panel, Stepper, Tabs, Pagination, DataTable, HealthBar, HudCounter, TouchButton
-    organisms/  Dialog, Hud, TouchControls, PauseDialog, OptionsForm, NetworkLabDialog
+    molecules/  Panel, Stepper, Tabs, Pagination, DataTable, HullSprite, TouchButton
+    organisms/  Dialog, ToastProvider, Hud, TouchControls, PauseDialog, OptionsForm, NetworkLabDialog
     templates/  SceneBackground, ScreenTemplate
-    pages/      Splash, Menu, Options, Loading, Battle, Result, Captain's Log
+    pages/      Splash, Menu, Options, Shipyard, Loading, Battle, Result, Captain's Log
     shared/     icon and asset URL maps, focus helpers
+  i18n/       typed message dictionaries (English source of truth) and the translate helper
   data/       Axios client, contracts, TanStack Query hooks, pending submissions
   mocks/      MSW handlers, fixtures, in-browser database and network scenarios
   storage/    localStorage adapters with validation
@@ -86,7 +87,7 @@ Every read goes through a type guard; corrupted values fall back to defaults. A 
 
 Contracts live in `src/data/contracts.ts` (`MatchRecord`, `RankingEntry`, `Page<T>`, queries). Axios (`httpClient`) performs the requests with a 6 s timeout and maps failures to `ApiError { kind, status, retryable }`. TanStack Query hooks (`useRankingQuery`, `useHistoryQuery`) use `keepPreviousData` for pagination, refetch on every mount so the tabs are fresh when reopened, forward the abort signal so superseded requests are cancelled, and retry retryable errors twice with backoff. Delayed responses cannot overwrite newer data: keys are per page and per configuration, in-flight requests are deduplicated, and invalidation cancels the previous fetch.
 
-A finished match becomes a `MatchRecord` with a client-generated id, is stored as the last result, enqueued in the pending store and submitted. `POST /api/matches` is idempotent on the id (201 created / 200 existing), so retries after a timeout or repeated clicks never duplicate. The submission manager keeps a single in-flight promise per id, marks failures with the error, and on success removes the record from the pending store and invalidates both query roots. Pending records survive refreshes and are flushed on startup and when the log opens; the result screen and the history tab expose manual retries.
+A finished match becomes a `MatchRecord` with a client-generated id, is stored as the last result, enqueued in the pending store and submitted. `POST /api/matches` is idempotent on the id (201 created / 200 existing), so retries after a timeout or repeated clicks never duplicate. The submission manager runs each submission through a TanStack `MutationObserver` scoped per match id, keeps a single in-flight promise per id, marks failures with the error, and on success removes the record from the pending store, cancels in-flight list requests and invalidates both query roots. Pending records survive refreshes and are flushed on startup and when the log opens; the result screen and the history tab expose manual retries.
 
 ## Mocking
 
