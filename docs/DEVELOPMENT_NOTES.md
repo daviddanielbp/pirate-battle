@@ -23,7 +23,6 @@ These were found by playing the game in the browser and were fixed before delive
 | Transient confirmations ("scenario applied", "options saved", purchases) pushed the buttons around inside dialogs | Toast system in the top-right corner above every layer, sliding in from the right |
 | Screen changes were abrupt and surviving a battle looked the same as losing | Screen and dialog transitions; victory banner, animated score and a Shipyard shortcut on the result screen |
 | Portrait phones paused the game and asked to rotate | The world container is rotated 90° in portrait so the whole arena stays visible; pointer input maps through the same transform |
-| A start screen had been added before the main menu; the brief describes the main menu as the entry screen | Removed so the main menu is the first screen, exactly as specified |
 | The volume label read "80 percent" | Number only |
 | Taking damage had little feedback beyond the health bar, and cannon readiness was invisible | Short camera shake when the player is hit or rammed; cooldown bars for the three cannons in the HUD |
 
