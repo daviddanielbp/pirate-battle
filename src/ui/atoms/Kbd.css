@@ -1,0 +1,21 @@
+.pb-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  padding: 0 var(--pb-space-2);
+  border-radius: var(--pb-radius-sm);
+  border: 1px solid var(--pb-color-wood-dark);
+  border-bottom-width: 3px;
+  background: linear-gradient(to bottom, #fff2cf, var(--pb-color-cream));
+  color: var(--pb-color-ink);
+  font-family: var(--pb-font-family);
+  font-size: var(--pb-font-size-sm);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,31 @@
+.pb-scene {
+  position: fixed;
+  inset: 0;
+  z-index: var(--pb-z-scene);
+  overflow: hidden;
+  background: var(--pb-color-navy-deep);
+}
+
+.pb-scene__image {
+  position: absolute;
+  inset: -12px;
+  background: url('/assets/ui/scene_background.png') center / cover no-repeat;
+  filter: saturate(0.95) brightness(0.92);
+}
+
+.pb-scene__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(10, 20, 35, 0.08) 0%, rgba(10, 20, 35, 0.55) 100%);
+  transition: background-color var(--pb-transition-fast);
+}
+
+.pb-scene--dimmed .pb-scene__vignette {
+  background-color: var(--pb-color-overlay);
+}
+
+.pb-scene__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+}

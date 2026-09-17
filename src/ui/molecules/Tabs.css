@@ -1,0 +1,19 @@
+.pb-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pb-space-2);
+}
+
+.pb-tabs__tab[aria-selected='true'] {
+  cursor: default;
+}
+
+.pb-tab-panel {
+  width: 100%;
+}
+
+.pb-tab-panel:focus-visible {
+  outline-offset: 0;
+}

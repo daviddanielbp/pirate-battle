@@ -1,0 +1,250 @@
+.shipyard-panel .pb-panel__body {
+  align-items: stretch;
+}
+
+.shipyard-summary {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: var(--pb-space-3) var(--pb-space-6);
+  padding: var(--pb-space-3) var(--pb-space-4);
+  border-radius: var(--pb-radius-md);
+  background: var(--pb-color-row-alt);
+  border: 1px solid var(--pb-color-border-subtle);
+}
+
+.shipyard-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.shipyard-stat__value {
+  font-size: var(--pb-font-size-md);
+  font-weight: 700;
+  color: var(--pb-color-cream);
+  text-shadow: var(--pb-shadow-text);
+}
+
+.shipyard-stat__number {
+  font-size: var(--pb-font-size-xl);
+  line-height: 1;
+}
+
+.shipyard-xp {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-1);
+  min-width: 0;
+}
+
+.shipyard-xp .pb-progress {
+  width: 100%;
+}
+
+.shipyard-xp__text {
+  font-size: var(--pb-font-size-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.shipyard-hint {
+  font-size: var(--pb-font-size-sm);
+  color: var(--pb-color-muted);
+  text-align: center;
+}
+
+.shipyard-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-3);
+  width: 100%;
+  padding-top: var(--pb-space-3);
+  border-top: 1px solid var(--pb-color-border-subtle);
+}
+
+.shipyard-section__title {
+  font-size: var(--pb-font-size-lg);
+  font-weight: 700;
+  letter-spacing: var(--pb-tracking-title);
+  text-transform: uppercase;
+  color: var(--pb-color-gold);
+  text-shadow: var(--pb-shadow-text);
+}
+
+.shipyard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: var(--pb-space-2);
+}
+
+.shipyard-grid--cannons {
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+
+.shipyard-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--pb-space-2);
+  border-radius: var(--pb-radius-md);
+  border: 1px solid var(--pb-color-border-subtle);
+  background: var(--pb-color-row);
+  text-align: center;
+  transition: border-color var(--pb-transition-fast);
+}
+
+.shipyard-card--equipped {
+  border-color: color-mix(in srgb, var(--pb-color-gold) 60%, transparent);
+  background: var(--pb-color-row-highlight);
+}
+
+.shipyard-card__art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+}
+
+.shipyard-sprite {
+  display: inline-block;
+  background-image: url('/assets/game/ships.png');
+  background-repeat: no-repeat;
+  image-rendering: auto;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45));
+}
+
+.shipyard-card__name {
+  font-weight: 700;
+  color: var(--pb-color-cream);
+  text-shadow: var(--pb-shadow-text);
+}
+
+.shipyard-card__description {
+  font-size: var(--pb-font-size-sm);
+  line-height: 1.35;
+}
+
+.shipyard-card__price {
+  font-size: var(--pb-font-size-sm);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--pb-color-gold);
+  text-shadow: var(--pb-shadow-text);
+}
+
+.shipyard-card--equipped .shipyard-card__price {
+  color: var(--pb-color-success);
+}
+
+.shipyard-action {
+  --pb-button-scale: 0.52;
+  margin-top: auto;
+}
+
+[data-affordable='false'] .shipyard-action:not(:disabled) {
+  opacity: 0.6;
+  filter: saturate(0.6);
+}
+
+.shipyard-upgrades {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-2);
+}
+
+.shipyard-upgrade {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) auto auto auto;
+  align-items: center;
+  gap: var(--pb-space-2) var(--pb-space-3);
+  padding: 4px var(--pb-space-3);
+  border-radius: var(--pb-radius-md);
+  border: 1px solid var(--pb-color-border-subtle);
+  background: var(--pb-color-row);
+}
+
+.shipyard-upgrade__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.shipyard-upgrade__level {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pb-space-1);
+}
+
+.shipyard-upgrade__level-text {
+  font-size: var(--pb-font-size-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--pb-color-muted);
+  white-space: nowrap;
+}
+
+.shipyard-pips {
+  display: inline-flex;
+  gap: var(--pb-space-1);
+}
+
+.shipyard-pip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--pb-color-gold-dark);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.shipyard-pip--filled {
+  background: var(--pb-color-gold);
+  box-shadow: 0 0 6px rgba(242, 193, 78, 0.6);
+}
+
+.shipyard-message {
+  align-self: center;
+}
+
+.shipyard-footer {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--pb-space-2);
+}
+
+@media (max-width: 640px) {
+  .shipyard-summary {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .shipyard-xp {
+    grid-column: 1 / -1;
+  }
+
+  .shipyard-upgrade {
+    grid-template-columns: 1fr auto;
+  }
+
+  .shipyard-upgrade__info {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-height: 480px) {
+  .shipyard-hint {
+    font-size: var(--pb-font-size-xs);
+  }
+
+  .shipyard-card__art {
+    height: 60px;
+  }
+
+  .shipyard-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+}

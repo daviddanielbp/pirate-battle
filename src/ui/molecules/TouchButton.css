@@ -1,0 +1,4 @@
+.pb-touch-button {
+  touch-action: none;
+  cursor: pointer;
+}

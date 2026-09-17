@@ -1,0 +1,13 @@
+.pb-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pb-space-4);
+}
+
+.pb-pagination__label {
+  min-width: 96px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

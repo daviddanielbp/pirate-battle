@@ -1,0 +1,107 @@
+.pb-slider {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pb-space-2);
+  width: 100%;
+}
+
+.pb-slider__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pb-space-3);
+}
+
+.pb-slider__label {
+  font-weight: 700;
+  color: var(--pb-color-cream);
+  text-shadow: var(--pb-shadow-text);
+}
+
+.pb-slider__value {
+  font-size: var(--pb-font-size-md);
+}
+
+.pb-slider__input {
+  --pb-slider-fill: 0%;
+  --pb-slider-track: linear-gradient(
+    to right,
+    var(--pb-color-gold) 0%,
+    var(--pb-color-amber) var(--pb-slider-fill),
+    var(--pb-color-navy-dark) var(--pb-slider-fill),
+    var(--pb-color-navy-dark) 100%
+  );
+  width: 100%;
+  height: var(--pb-touch-target);
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.pb-slider__input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pb-slider__input::-webkit-slider-runnable-track {
+  height: 12px;
+  border-radius: var(--pb-radius-pill);
+  border: 2px solid var(--pb-color-wood-dark);
+  background: var(--pb-slider-track);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.pb-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-top: -8px;
+  border-radius: 50%;
+  border: 3px solid var(--pb-color-wood-dark);
+  background: radial-gradient(
+    circle at 35% 35%,
+    #ffe08a,
+    var(--pb-color-gold) 55%,
+    var(--pb-color-gold-dark)
+  );
+  box-shadow: var(--pb-shadow-raised);
+}
+
+.pb-slider__input::-moz-range-track {
+  height: 12px;
+  border-radius: var(--pb-radius-pill);
+  border: 2px solid var(--pb-color-wood-dark);
+  background: var(--pb-slider-track);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.pb-slider__input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 3px solid var(--pb-color-wood-dark);
+  background: radial-gradient(
+    circle at 35% 35%,
+    #ffe08a,
+    var(--pb-color-gold) 55%,
+    var(--pb-color-gold-dark)
+  );
+  box-shadow: var(--pb-shadow-raised);
+}
+
+.pb-slider__input:focus-visible {
+  outline: none;
+}
+
+.pb-slider__input:focus-visible::-webkit-slider-thumb {
+  outline: var(--pb-focus-ring-width) solid var(--pb-focus-ring-color);
+  outline-offset: 3px;
+}
+
+.pb-slider__input:focus-visible::-moz-range-thumb {
+  outline: var(--pb-focus-ring-width) solid var(--pb-focus-ring-color);
+  outline-offset: 3px;
+}

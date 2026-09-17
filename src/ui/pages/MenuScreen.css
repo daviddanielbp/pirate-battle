@@ -1,0 +1,163 @@
+.menu-panel {
+  text-align: center;
+}
+
+.menu-layout {
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) minmax(280px, 1.3fr) minmax(200px, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.menu-side {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  padding: 14px 12px;
+  border-radius: 12px;
+  background: rgb(0 0 0 / 0.18);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  text-align: left;
+}
+
+.menu-side--ship {
+  text-align: center;
+}
+
+.menu-side h2 {
+  margin: 0;
+  justify-self: center;
+}
+
+.menu-center {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.menu-title {
+  margin: 0;
+  line-height: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-title-art {
+  width: min(100%, 320px);
+  height: auto;
+  display: block;
+}
+
+.menu-tagline {
+  margin: 0 0 8px;
+}
+
+.menu-actions {
+  align-items: center;
+}
+
+.menu-caption {
+  margin: 10px 0 6px;
+  font-size: 0.9rem;
+  color: var(--pb-color-muted);
+}
+
+.menu-log-links {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.menu-controls {
+  width: 100%;
+}
+
+.menu-controls h2 {
+  margin: 0 0 8px;
+  text-align: center;
+}
+
+.menu-controls-list {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.menu-controls-item {
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+}
+
+.menu-controls-item dt {
+  color: var(--pb-color-text);
+}
+
+.menu-controls-item dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.menu-controls-touch {
+  font-size: 0.75rem;
+}
+
+.menu-ship-sprite {
+  margin: 4px auto;
+}
+
+.menu-ship-name {
+  margin: 0;
+  font-weight: 700;
+}
+
+.menu-progress {
+  margin: 0;
+  color: var(--pb-color-accent);
+}
+
+.menu-footer {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.menu-network-link {
+  background: none;
+  border: 0;
+  color: var(--pb-color-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.menu-network-link:hover {
+  color: var(--pb-color-text);
+}
+
+@media (max-width: 900px) {
+  .menu-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-center {
+    order: -1;
+  }
+}
+
+@media (max-height: 480px) {
+  .menu-title-art {
+    width: 220px;
+  }
+
+  .menu-tagline {
+    display: none;
+  }
+}

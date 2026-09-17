@@ -1,0 +1,6 @@
+.pb-hull-sprite {
+  display: inline-block;
+  background-image: url('/assets/game/ships.png');
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 4px 6px rgb(0 0 0 / 0.45));
+}

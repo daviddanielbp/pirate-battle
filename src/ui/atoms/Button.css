@@ -1,0 +1,100 @@
+.pb-button {
+  --pb-button-scale: 1;
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: calc(256px * var(--pb-button-scale));
+  height: calc(88px * var(--pb-button-scale));
+  padding: calc(19.5px * var(--pb-button-scale)) calc(32.5px * var(--pb-button-scale))
+    calc(22px * var(--pb-button-scale));
+  background: center / 100% 100% no-repeat;
+  border-radius: calc(24px * var(--pb-button-scale));
+  font-weight: 700;
+  font-size: calc(20px * var(--pb-button-scale));
+  line-height: 1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform var(--pb-transition-fast),
+    opacity var(--pb-transition-fast);
+}
+
+.pb-button--small {
+  --pb-button-scale: 0.75;
+}
+
+.pb-button__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: normal;
+}
+
+.pb-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background-image:
+    url('/assets/ui/menu/button_primary_hover.png'), url('/assets/ui/menu/button_primary_pressed.png'),
+    url('/assets/ui/menu/button_secondary_pressed.png');
+}
+
+.pb-button--primary {
+  background-image: url('/assets/ui/menu/button_primary_normal.png');
+  color: var(--pb-color-ink);
+  text-shadow: var(--pb-shadow-text-light);
+}
+
+.pb-button--secondary {
+  background-image: url('/assets/ui/menu/button_secondary_normal.png');
+  color: var(--pb-color-cream);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+@media (hover: hover) {
+  .pb-button--primary:hover:not(:disabled) {
+    background-image: url('/assets/ui/menu/button_primary_hover.png');
+  }
+
+  .pb-button--secondary:hover:not(:disabled) {
+    filter: brightness(1.12);
+  }
+}
+
+.pb-button--primary:active:not(:disabled) {
+  background-image: url('/assets/ui/menu/button_primary_pressed.png');
+}
+
+.pb-button--secondary:active:not(:disabled) {
+  background-image: url('/assets/ui/menu/button_secondary_pressed.png');
+  filter: none;
+}
+
+.pb-button:active:not(:disabled) .pb-button__label {
+  transform: translateY(1px);
+}
+
+.pb-button--primary:disabled {
+  background-image: url('/assets/ui/menu/button_primary_disabled.png');
+  color: rgba(43, 26, 8, 0.6);
+  text-shadow: none;
+}
+
+.pb-button--secondary:disabled {
+  opacity: 0.5;
+  filter: grayscale(0.4);
+}
+
+.pb-button:focus-visible {
+  outline-offset: -4px;
+}

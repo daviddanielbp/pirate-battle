@@ -1,0 +1,26 @@
+.touch-controls {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.touch-cluster {
+  position: absolute;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.touch-cluster-left {
+  left: calc(12px + env(safe-area-inset-left));
+}
+
+.touch-cluster-right {
+  right: calc(12px + env(safe-area-inset-right));
+}
+
+.touch-cluster > :nth-child(2) {
+  margin-bottom: 26px;
+}

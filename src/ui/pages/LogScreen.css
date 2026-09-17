@@ -1,0 +1,111 @@
+.log-panel {
+  text-align: center;
+}
+
+.log-tabs {
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.log-section {
+  display: grid;
+  gap: 12px;
+}
+
+.log-subtitle {
+  margin: 0;
+}
+
+.log-state {
+  margin: 24px 0;
+  color: var(--pb-color-muted);
+}
+
+.log-state-block {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  margin: 16px 0;
+}
+
+.log-refreshing {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pb-color-muted);
+}
+
+.log-table-stale {
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.log-captain {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.log-you {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgb(240 179 58 / 0.25);
+  color: var(--pb-color-accent);
+}
+
+.log-date {
+  white-space: nowrap;
+}
+
+.log-result {
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.log-result-time {
+  color: var(--pb-color-success);
+}
+
+.log-result-defeated {
+  color: #ff8a80;
+}
+
+.log-pending {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.log-pending-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgb(240 179 58 / 0.12);
+  font-size: 0.85rem;
+}
+
+.log-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.log-result-cell {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.log-loadout {
+  font-size: 0.7rem;
+}

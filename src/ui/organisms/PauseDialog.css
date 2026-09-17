@@ -1,0 +1,9 @@
+.pause-copy {
+  margin: 0 0 16px;
+  text-align: center;
+  color: var(--pb-color-muted);
+}
+
+.pause-actions {
+  align-items: center;
+}

@@ -1,0 +1,63 @@
+.pb-round {
+  --pb-round-size: 56px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--pb-round-size);
+  height: var(--pb-round-size);
+  min-width: var(--pb-touch-target);
+  min-height: var(--pb-touch-target);
+  border-radius: 50%;
+  background: url('/assets/ui/controls/button_round_normal.png') center / 100% 100% no-repeat;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform var(--pb-transition-fast);
+}
+
+.pb-round::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background-image:
+    url('/assets/ui/controls/button_round_hover.png'), url('/assets/ui/controls/button_round_pressed.png');
+}
+
+.pb-round__icon {
+  width: 50%;
+  height: 50%;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.35));
+}
+
+@media (hover: hover) {
+  .pb-round:hover:not(:disabled):not(.pb-round--pressed) {
+    background-image: url('/assets/ui/controls/button_round_hover.png');
+  }
+}
+
+.pb-round:active:not(:disabled),
+.pb-round--pressed:not(:disabled) {
+  background-image: url('/assets/ui/controls/button_round_pressed.png');
+}
+
+.pb-round:active:not(:disabled) .pb-round__icon,
+.pb-round--pressed:not(:disabled) .pb-round__icon {
+  transform: translateY(1px) scale(0.94);
+}
+
+.pb-round:disabled {
+  opacity: 0.45;
+  filter: grayscale(0.5);
+}
+
+.pb-round:focus-visible {
+  outline-offset: 2px;
+  border-radius: 50%;
+}
