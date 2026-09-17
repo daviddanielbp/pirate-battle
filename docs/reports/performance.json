@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-17T16:03:19.341Z",
+  "generatedAt": "2026-09-17T18:59:01.450Z",
   "environment": {
     "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
     "viewport": {
@@ -13,43 +13,43 @@
   "match": {
     "sessionSeconds": 180,
     "spawnIntervalSeconds": 3,
-    "finalScore": 55,
+    "finalScore": 50,
     "finalStatus": "ended",
     "elapsedSeconds": 180
   },
   "frames": {
     "frames": 10801,
-    "seconds": 180.02720000000002,
-    "averageFps": 59.99648941937662,
-    "p95FrameMs": 18.200000000004366,
-    "maxFrameMs": 32.89999999999998,
-    "averageEntities": 3.435607814091288,
+    "seconds": 180.0166,
+    "averageFps": 60.00002222017302,
+    "p95FrameMs": 17.60000000000582,
+    "maxFrameMs": 17.80000000000291,
+    "averageEntities": 3.5140264790297193,
     "maxEntities": 10
   },
   "memoryCycles": [
     {
       "cycle": 0,
-      "usedJsHeapMb": 9.231708526611328
+      "usedJsHeapMb": 9.843079566955566
     },
     {
       "cycle": 1,
-      "usedJsHeapMb": 9.543537139892578
+      "usedJsHeapMb": 10.153971672058105
     },
     {
       "cycle": 2,
-      "usedJsHeapMb": 9.770523071289062
+      "usedJsHeapMb": 10.393763542175293
     },
     {
       "cycle": 3,
-      "usedJsHeapMb": 9.851131439208984
+      "usedJsHeapMb": 10.500262260437012
     },
     {
       "cycle": 4,
-      "usedJsHeapMb": 9.996368408203125
+      "usedJsHeapMb": 10.649867057800293
     },
     {
       "cycle": 5,
-      "usedJsHeapMb": 10.063896179199219
+      "usedJsHeapMb": 10.710312843322754
     }
   ]
 }
