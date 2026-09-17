@@ -1,6 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 import { TEST_IDS } from '../src/testing/testIds';
-import { byTestId, openMenu, readStorage, STORAGE } from './support/app';
+import {
+  byTestId,
+  openMenu,
+  readStorage,
+  STORAGE,
+  switchScenario,
+} from './support/app';
 
 const PAGE_SIZE = 5;
 const DEFAULT_RANKING_PAGES = 3;
@@ -15,18 +21,6 @@ function rows(page: Page) {
 
 function pageLabel(page: Page) {
   return byTestId(page, TEST_IDS.logPageLabel);
-}
-
-async function switchScenario(page: Page, scenario: string): Promise<void> {
-  await byTestId(page, TEST_IDS.menuNetworkLab).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeVisible();
-  await byTestId(page, TEST_IDS.networkLabScenario).selectOption(scenario);
-  await byTestId(page, TEST_IDS.networkLabApply).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toContainText(
-    `Scenario "${scenario}" is now active.`,
-  );
-  await byTestId(page, TEST_IDS.networkLabClose).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeHidden();
 }
 
 test.describe("Captain's log", () => {
@@ -236,7 +230,7 @@ test.describe("Captain's log", () => {
     await expect(byTestId(page, TEST_IDS.networkLabScenario)).toHaveValue('empty');
     await byTestId(page, TEST_IDS.networkLabReset).click();
     await expect(byTestId(page, TEST_IDS.networkLabScenario)).toHaveValue('default');
-    await expect(byTestId(page, TEST_IDS.networkLabDialog)).toContainText('were reset');
+    await expect(page.getByText('were reset')).toBeVisible();
     await byTestId(page, TEST_IDS.networkLabClose).click();
     expect(await readStorage<string>(page, STORAGE.scenario)).toBeNull();
 

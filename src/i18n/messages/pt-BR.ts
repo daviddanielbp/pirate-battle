@@ -96,7 +96,6 @@ export const ptBR: Record<MessageKey, string> = {
   'shipyard.upgrade': 'Melhorar · {price}',
   'shipyard.maxedLabel': '{name} no nível máximo',
   'shipyard.upgradeLabel': 'Melhorar {name} para o nível {level} por {price}',
-  'shipyard.idle': 'Afunde inimigos para ganhar moedas e gaste-as aqui.',
   'shipyard.equippedMessage': '{name} equipado.',
   'shipyard.purchasedMessage': '{name} comprado e equipado.',
   'shipyard.upgradedMessage': '{name} melhorado para o nível {level}.',

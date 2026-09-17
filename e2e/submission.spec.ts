@@ -1,7 +1,15 @@
 import { expect, test, type Page } from '@playwright/test';
 import type { MatchRecord } from '../src/data/contracts';
 import { TEST_IDS } from '../src/testing/testIds';
-import { advanceInSteps, byTestId, readStorage, startBattle, STORAGE, waitForBattle } from './support/app';
+import {
+  advanceInSteps,
+  byTestId,
+  readStorage,
+  startBattle,
+  STORAGE,
+  switchScenario,
+  waitForBattle,
+} from './support/app';
 
 const SHORT_OPTIONS = { sessionSeconds: 60, spawnIntervalSeconds: 3 };
 const SESSION_MS = SHORT_OPTIONS.sessionSeconds * 1000;
@@ -46,18 +54,6 @@ async function finishBattle(page: Page): Promise<ResultSummary> {
 
 async function pendingState(page: Page): Promise<PendingState> {
   return (await readStorage<PendingState>(page, STORAGE.pending)) ?? { pending: [], confirmedIds: [] };
-}
-
-async function switchScenario(page: Page, scenario: string): Promise<void> {
-  await byTestId(page, TEST_IDS.menuNetworkLab).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeVisible();
-  await byTestId(page, TEST_IDS.networkLabScenario).selectOption(scenario);
-  await byTestId(page, TEST_IDS.networkLabApply).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toContainText(
-    `Scenario "${scenario}" is now active.`,
-  );
-  await byTestId(page, TEST_IDS.networkLabClose).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeHidden();
 }
 
 async function expectHistoryRow(page: Page, result: ResultSummary): Promise<void> {

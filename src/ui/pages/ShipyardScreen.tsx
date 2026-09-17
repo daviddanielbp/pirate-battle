@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   CANNON_CATALOG,
   HULL_CATALOG,
@@ -20,7 +19,8 @@ import {
 import type { MessageKey, MessageParams, Translate } from '@/i18n';
 import { savePlayerProgress, usePlayerProgress } from '@/storage/progressStore';
 import { TEST_IDS } from '@/testing/testIds';
-import { Button, HullSprite, Panel, ProgressBar, ScreenTemplate, StatusMessage } from '@/ui';
+import { Button, HullSprite, Panel, ProgressBar, ScreenTemplate } from '@/ui';
+import { useToast } from '@/app/toastContext';
 import { useTranslation } from '@/app/useTranslation';
 import { useUiSounds } from '@/app/useUiSounds';
 import './ShipyardScreen.css';
@@ -36,8 +36,6 @@ interface Feedback {
   key: MessageKey;
   params?: MessageParams;
 }
-
-const IDLE_FEEDBACK: Feedback = { tone: 'info', key: 'shipyard.idle' };
 
 function failureFeedback(reason: PurchaseError, name: string, price: number, coins: number): Feedback {
   switch (reason) {
@@ -69,12 +67,19 @@ export function ShipyardScreen({ onBack }: ShipyardScreenProps): React.JSX.Eleme
   const sounds = useUiSounds();
   const progress = usePlayerProgress();
   const level = levelFromXp(progress.xp);
-  const [feedback, setFeedback] = useState<Feedback>(IDLE_FEEDBACK);
+  const toast = useToast();
+  const announce = (feedback: Feedback) =>
+    toast.show({
+      id: 'shipyard',
+      tone: feedback.tone,
+      message: t(feedback.key, feedback.params),
+      testId: TEST_IDS.shipyardMessage,
+    });
 
   const commit = (next: PlayerProgress, key: MessageKey, params: MessageParams) => {
     savePlayerProgress(next);
     sounds.click();
-    setFeedback({ tone: 'success', key, params });
+    announce({ tone: 'success', key, params });
   };
 
   const handleHull = (item: HullItem) => {
@@ -87,7 +92,7 @@ export function ShipyardScreen({ onBack }: ShipyardScreenProps): React.JSX.Eleme
     if (result.ok) {
       commit(result.progress, 'shipyard.purchasedMessage', { name: item.name });
     } else {
-      setFeedback(failureFeedback(result.reason, item.name, item.price, progress.coins));
+      announce(failureFeedback(result.reason, item.name, item.price, progress.coins));
     }
   };
 
@@ -101,7 +106,7 @@ export function ShipyardScreen({ onBack }: ShipyardScreenProps): React.JSX.Eleme
     if (result.ok) {
       commit(result.progress, 'shipyard.purchasedMessage', { name: item.name });
     } else {
-      setFeedback(failureFeedback(result.reason, item.name, item.price, progress.coins));
+      announce(failureFeedback(result.reason, item.name, item.price, progress.coins));
     }
   };
 
@@ -112,7 +117,7 @@ export function ShipyardScreen({ onBack }: ShipyardScreenProps): React.JSX.Eleme
     if (result.ok) {
       commit(result.progress, 'shipyard.upgradedMessage', { name: item.name, level: current + 1 });
     } else {
-      setFeedback(failureFeedback(result.reason, item.name, price, progress.coins));
+      announce(failureFeedback(result.reason, item.name, price, progress.coins));
     }
   };
 
@@ -316,10 +321,6 @@ export function ShipyardScreen({ onBack }: ShipyardScreenProps): React.JSX.Eleme
             })}
           </ul>
         </section>
-
-        <StatusMessage tone={feedback.tone} testId={TEST_IDS.shipyardMessage} className="shipyard-message">
-          {t(feedback.key, feedback.params)}
-        </StatusMessage>
 
         <footer className="shipyard-footer">
           <Button

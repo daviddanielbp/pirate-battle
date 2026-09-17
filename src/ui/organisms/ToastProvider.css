@@ -1,0 +1,46 @@
+.pb-toasts {
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top));
+  right: calc(12px + env(safe-area-inset-right));
+  z-index: var(--pb-z-toast);
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+  width: min(420px, calc(100vw - 24px));
+  pointer-events: none;
+}
+
+.pb-toast {
+  pointer-events: auto;
+  animation: pb-toast-in 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  filter: drop-shadow(0 8px 18px rgb(0 0 0 / 0.45));
+}
+
+.pb-toast__dismiss {
+  all: unset;
+  display: block;
+  cursor: pointer;
+}
+
+.pb-toast__dismiss:focus-visible {
+  outline: 2px solid var(--pb-color-gold);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+@keyframes pb-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pb-toast {
+    animation: none;
+  }
+}

@@ -8,6 +8,7 @@ import {
   readStorage,
   startBattle,
   STORAGE,
+  switchScenario,
   waitForBattle,
 } from './support/app';
 
@@ -31,18 +32,6 @@ function pageLabel(page: Page) {
 
 async function firstRowText(page: Page): Promise<string> {
   return (await rows(page).first().textContent()) ?? '';
-}
-
-async function switchScenario(page: Page, scenario: string): Promise<void> {
-  await byTestId(page, TEST_IDS.menuNetworkLab).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeVisible();
-  await byTestId(page, TEST_IDS.networkLabScenario).selectOption(scenario);
-  await byTestId(page, TEST_IDS.networkLabApply).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toContainText(
-    `Scenario "${scenario}" is now active.`,
-  );
-  await byTestId(page, TEST_IDS.networkLabClose).click();
-  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeHidden();
 }
 
 async function expectStablePage(page: Page, label: string, expectedFirstRow: string): Promise<void> {

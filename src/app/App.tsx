@@ -21,6 +21,7 @@ import { installTestApi, reportScreen } from '@/testing/instrumentation';
 import { nextMatchSeed, readRuntimeFlags } from '@/testing/flags';
 import { TEST_IDS } from '@/testing/testIds';
 import { AudioProvider } from './AudioProvider';
+import { ToastProvider } from '@/ui/organisms/ToastProvider';
 import { LanguageProvider } from './LanguageProvider';
 import { buildMatchRecord, createMatchSession, type MatchSession } from './matchSession';
 import { screenReducer, type Screen } from './screens';
@@ -137,9 +138,11 @@ export function App(): React.JSX.Element {
     <QueryClientProvider client={queryClient}>
       <AudioProvider>
         <LanguageProvider>
-          <div data-testid={TEST_IDS.app} className="pb-app">
-            {content}
-          </div>
+          <ToastProvider>
+            <div data-testid={TEST_IDS.app} className="pb-app">
+              {content}
+            </div>
+          </ToastProvider>
         </LanguageProvider>
       </AudioProvider>
     </QueryClientProvider>

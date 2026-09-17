@@ -97,7 +97,6 @@ export const fr: Record<MessageKey, string> = {
   'shipyard.upgrade': 'Améliorer · {price}',
   'shipyard.maxedLabel': '{name} au niveau maximum',
   'shipyard.upgradeLabel': 'Améliorer {name} au niveau {level} pour {price}',
-  'shipyard.idle': 'Coulez des ennemis pour gagner des pièces, puis dépensez-les ici.',
   'shipyard.equippedMessage': '{name} équipé.',
   'shipyard.purchasedMessage': '{name} acheté et équipé.',
   'shipyard.upgradedMessage': '{name} amélioré au niveau {level}.',

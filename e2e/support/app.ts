@@ -135,3 +135,13 @@ export function collectConsoleErrors(page: Page): string[] {
   });
   return errors;
 }
+
+export async function switchScenario(page: Page, scenario: string): Promise<void> {
+  await byTestId(page, TEST_IDS.menuNetworkLab).click();
+  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeVisible();
+  await byTestId(page, TEST_IDS.networkLabScenario).selectOption(scenario);
+  await byTestId(page, TEST_IDS.networkLabApply).click();
+  await expect(page.getByText(`Scenario "${scenario}" is now active.`)).toBeVisible();
+  await byTestId(page, TEST_IDS.networkLabClose).click();
+  await expect(byTestId(page, TEST_IDS.networkLabDialog)).toBeHidden();
+}

@@ -13,6 +13,7 @@ import {
 import { savePlayerOptions, usePlayerOptions, validatePlayerOptions } from '@/storage/optionsStore';
 import { TEST_IDS } from '@/testing/testIds';
 import { Button, Slider, StatusMessage, Stepper, Toggle } from '@/ui';
+import { useToast } from '@/app/toastContext';
 import './OptionsForm.css';
 
 export interface OptionsFormProps {
@@ -28,7 +29,7 @@ export function OptionsForm({ backLabel, onBack }: OptionsFormProps): React.JSX.
   const [draft, setDraft] = useState<PlayerOptions>(stored);
   const [volume, setVolume] = useState(Math.round(audio.settings.volume * 100));
   const [muted, setMuted] = useState(audio.settings.muted);
-  const [saved, setSaved] = useState(false);
+  const toast = useToast();
   const [saveError, setSaveError] = useState<MessageKey | null>(null);
   const hintId = useId();
   const steeringId = useId();
@@ -36,16 +37,7 @@ export function OptionsForm({ backLabel, onBack }: OptionsFormProps): React.JSX.
 
   const validation = validatePlayerOptions(draft);
   const invalid = validation.sessionSeconds !== null || validation.spawnIntervalSeconds !== null;
-  const dirty =
-    draft.sessionSeconds !== stored.sessionSeconds ||
-    draft.spawnIntervalSeconds !== stored.spawnIntervalSeconds ||
-    draft.steering !== stored.steering ||
-    draft.language !== stored.language ||
-    volume !== Math.round(audio.settings.volume * 100) ||
-    muted !== audio.settings.muted;
-
   const update = (patch: Partial<PlayerOptions>): void => {
-    setSaved(false);
     setSaveError(null);
     setDraft((current) => ({ ...current, ...patch }));
   };
@@ -63,7 +55,7 @@ export function OptionsForm({ backLabel, onBack }: OptionsFormProps): React.JSX.
     }
     audio.updateSettings({ volume: volume / 100, muted });
     sounds.click();
-    setSaved(true);
+    toast.show({ id: 'options', tone: 'success', message: t('options.saved') });
     setSaveError(null);
   };
 
@@ -171,8 +163,7 @@ export function OptionsForm({ backLabel, onBack }: OptionsFormProps): React.JSX.
         step={5}
         valueText={t('options.volumeValue', { volume })}
         onChange={(value) => {
-          setSaved(false);
-          setVolume(value);
+                setVolume(value);
         }}
         testId={TEST_IDS.optionsVolume}
       />
@@ -180,8 +171,7 @@ export function OptionsForm({ backLabel, onBack }: OptionsFormProps): React.JSX.
         label={t('options.mute')}
         checked={muted}
         onChange={(value) => {
-          setSaved(false);
-          setMuted(value);
+                setMuted(value);
         }}
         testId={TEST_IDS.optionsMute}
       />
@@ -190,7 +180,6 @@ export function OptionsForm({ backLabel, onBack }: OptionsFormProps): React.JSX.
           {t(saveError)}
         </StatusMessage>
       )}
-      {saved && !dirty && <StatusMessage tone="success">{t('options.saved')}</StatusMessage>}
       <div className="pb-stack options-actions">
         <Button type="submit" testId={TEST_IDS.optionsSave} disabled={invalid}>
           {t('options.save')}

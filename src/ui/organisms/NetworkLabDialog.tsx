@@ -1,10 +1,10 @@
 import { useId, useState } from 'react';
 import { useTranslation } from '@/app/useTranslation';
-import type { MessageKey, MessageParams } from '@/i18n';
 import { applyScenario, getActiveScenarioId, listScenarios, resetEverything } from '@/mocks/networkLab';
 import { isScenarioId, type ScenarioId } from '@/mocks/scenarios';
 import { TEST_IDS } from '@/testing/testIds';
-import { Button, Dialog, StatusMessage } from '@/ui';
+import { Button, Dialog } from '@/ui';
+import { useToast } from '@/app/toastContext';
 import './NetworkLabDialog.css';
 
 export interface NetworkLabDialogProps {
@@ -27,16 +27,11 @@ export function NetworkLabDialog({ open, onClose }: NetworkLabDialogProps): Reac
   );
 }
 
-interface LabMessage {
-  key: MessageKey;
-  params?: MessageParams;
-}
-
 function NetworkLabContent({ onClose }: { onClose: () => void }): React.JSX.Element {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<ScenarioId>(() => getActiveScenarioId());
   const [active, setActive] = useState<ScenarioId>(() => getActiveScenarioId());
-  const [message, setMessage] = useState<LabMessage | null>(null);
+  const toast = useToast();
   const selectId = useId();
   const scenarios = listScenarios();
   const description = scenarios.find((scenario) => scenario.id === selected)?.description ?? '';
@@ -55,7 +50,6 @@ function NetworkLabContent({ onClose }: { onClose: () => void }): React.JSX.Elem
         onChange={(event) => {
           const value = event.target.value;
           if (isScenarioId(value)) setSelected(value);
-          setMessage(null);
         }}
       >
         {scenarios.map((scenario) => (
@@ -68,7 +62,6 @@ function NetworkLabContent({ onClose }: { onClose: () => void }): React.JSX.Elem
       <p className="pb-muted network-lab-active">
         {t('networkLab.active')} <strong>{active}</strong>
       </p>
-      {message && <StatusMessage tone="success">{t(message.key, message.params)}</StatusMessage>}
       <div className="pb-row network-lab-actions">
         <Button
           size="small"
@@ -76,7 +69,7 @@ function NetworkLabContent({ onClose }: { onClose: () => void }): React.JSX.Elem
           onClick={() => {
             applyScenario(selected);
             setActive(selected);
-            setMessage({ key: 'networkLab.applied', params: { id: selected } });
+            toast.show({ id: 'network-lab', tone: 'success', message: t('networkLab.applied', { id: selected }) });
           }}
         >
           {t('networkLab.apply')}
@@ -90,7 +83,7 @@ function NetworkLabContent({ onClose }: { onClose: () => void }): React.JSX.Elem
             const current = getActiveScenarioId();
             setSelected(current);
             setActive(current);
-            setMessage({ key: 'networkLab.resetDone' });
+            toast.show({ id: 'network-lab', tone: 'success', message: t('networkLab.resetDone') });
           }}
         >
           {t('networkLab.reset')}

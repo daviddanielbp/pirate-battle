@@ -94,7 +94,6 @@ export const en = {
   'shipyard.upgrade': 'Upgrade · {price}',
   'shipyard.maxedLabel': '{name} maxed',
   'shipyard.upgradeLabel': 'Upgrade {name} to level {level} for {price}',
-  'shipyard.idle': 'Sink enemies to earn coins, then spend them here.',
   'shipyard.equippedMessage': '{name} equipped.',
   'shipyard.purchasedMessage': '{name} purchased and equipped.',
   'shipyard.upgradedMessage': '{name} upgraded to level {level}.',

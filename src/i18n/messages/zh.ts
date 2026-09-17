@@ -95,7 +95,6 @@ export const zh: Record<MessageKey, string> = {
   'shipyard.upgrade': '升级 · {price}',
   'shipyard.maxedLabel': '{name}已满级',
   'shipyard.upgradeLabel': '以 {price} 将{name}升级到 {level} 级',
-  'shipyard.idle': '击沉敌船赚取金币，然后在这里消费。',
   'shipyard.equippedMessage': '已装备{name}。',
   'shipyard.purchasedMessage': '已购买并装备{name}。',
   'shipyard.upgradedMessage': '{name}已升级到 {level} 级。',
