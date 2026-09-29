@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/data/queryClient';
 import { flushPending } from '@/data/submissionManager';
@@ -25,13 +25,19 @@ import { ToastProvider } from '@/ui/organisms/ToastProvider';
 import { LanguageProvider } from './LanguageProvider';
 import { buildMatchRecord, createMatchSession, type MatchSession } from './matchSession';
 import { screenReducer, type Screen } from './screens';
-import { BattleScreen } from '@/ui/pages/BattleScreen';
-import { LoadingScreen } from '@/ui/pages/LoadingScreen';
 import { LogScreen } from '@/ui/pages/LogScreen';
 import { MenuScreen } from '@/ui/pages/MenuScreen';
 import { OptionsScreen } from '@/ui/pages/OptionsScreen';
 import { ResultScreen } from '@/ui/pages/ResultScreen';
 import { ShipyardScreen } from '@/ui/pages/ShipyardScreen';
+
+// PixiJS is only needed once a battle is being prepared, so the loading and battle
+// screens are split out of the initial bundle and fetched when the player presses Play.
+// They are prefetched right after the menu renders, so pressing Play doesn't wait for the download.
+const loadLoadingScreen = () => import('@/ui/pages/LoadingScreen');
+const loadBattleScreen = () => import('@/ui/pages/BattleScreen');
+const LoadingScreen = lazy(() => loadLoadingScreen().then((module) => ({ default: module.LoadingScreen })));
+const BattleScreen = lazy(() => loadBattleScreen().then((module) => ({ default: module.BattleScreen })));
 
 const flags = readRuntimeFlags();
 if (flags.instrumentation) installTestApi();
@@ -47,6 +53,7 @@ export function App(): React.JSX.Element {
 
   useEffect(() => {
     void flushPending();
+    void Promise.all([loadLoadingScreen(), loadBattleScreen()]).catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -137,7 +144,7 @@ export function App(): React.JSX.Element {
         <LanguageProvider>
           <ToastProvider>
             <div data-testid={TEST_IDS.app} className="pb-app">
-              {content}
+              <Suspense fallback={null}>{content}</Suspense>
             </div>
           </ToastProvider>
         </LanguageProvider>
