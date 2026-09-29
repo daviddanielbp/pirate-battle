@@ -51,7 +51,7 @@ A structured review of the codebase (five perspectives: rules, runtime, React, d
 ## Verification before delivery
 
 - `pnpm lint`, `pnpm typecheck` and `pnpm build` clean.
-- The full Playwright suite passing on the production build, desktop and mobile Chromium, with committed visual baselines and an axe-core accessibility audit of every screen (report in `reports/playwright-report`).
+- The full Playwright suite passing on the production build, desktop and mobile Chromium, with committed visual baselines and an axe-core accessibility audit of every screen. The HTML report is generated in `playwright-report/` (not committed); CI uploads it as an artifact on every run.
 - Performance profile of a full three-minute battle and five start/play/leave cycles, with a screenshot, frame-time and memory charts as evidence (`PERFORMANCE.md`, `reports/`).
 - The published build was smoke-tested after deployment: menu, ranking served by MSW, a battle start, no console errors.
 
@@ -59,4 +59,4 @@ A structured review of the codebase (five perspectives: rules, runtime, React, d
 
 - Where an extra could conflict with the brief, the brief won: the default cannon fires a single projectile, keyboard steering and English are the defaults, the whole arena stays visible, and ranking and history remain simulated by MSW in the published build.
 - Social login and a shared online leaderboard were considered and rejected because the brief requires the mocked API in the published build and no dependency on private services.
-- The README of the brief was left untouched; the solution is documented in `SOLUTION.md`, `ARCHITECTURE.md`, `EXTRAS.md` and this file.
+- The brief is kept unchanged in `docs/CHALLENGE.md`; the solution is documented in `README.md`, `SOLUTION.md`, `ARCHITECTURE.md`, `EXTRAS.md` and this file.

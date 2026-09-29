@@ -8,7 +8,7 @@ Built with React 19, TypeScript (strict), PixiJS 8, TanStack Query 5, Axios, MSW
 - Architecture notes: [ARCHITECTURE.md](ARCHITECTURE.md)
 - Performance report: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 - Network scenarios: [src/mocks/README.md](src/mocks/README.md)
-- Original brief: [README.md](README.md)
+- Original brief: [docs/CHALLENGE.md](docs/CHALLENGE.md)
 - Extras beyond the brief: [EXTRAS.md](EXTRAS.md)
 - Development notes (process, review findings, verification): [docs/DEVELOPMENT_NOTES.md](docs/DEVELOPMENT_NOTES.md)
 

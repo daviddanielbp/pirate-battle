@@ -1,240 +1,113 @@
-## Solution
+# Pirate Battle
 
-Live game: https://pirate-battle-nine.vercel.app/ · Source: https://github.com/daviddanielbp/pirate-battle
+[![CI](https://github.com/daviddanielbp/pirate-battle/actions/workflows/ci.yml/badge.svg)](https://github.com/daviddanielbp/pirate-battle/actions/workflows/ci.yml)
 
-The brief below is kept unchanged. The solution is documented in:
+**English** · [Português](README.pt-BR.md)
 
-- [SOLUTION.md](SOLUTION.md) — setup, environment variables, controls, gameplay configuration, network scenarios (selection, reset and how to reproduce failures), commands and deployment.
-- [ARCHITECTURE.md](ARCHITECTURE.md) — React/PixiJS integration, simulation loop, collisions, resource management, local persistence, ranking and history integration, limitations and balancing.
-- [EXTRAS.md](EXTRAS.md) — optional additions (random arenas, mouse steering, Shipyard progression, interface languages). They are extras on top of the required behavior: every default matches the brief and no rule was changed.
-- [docs/PERFORMANCE.md](docs/PERFORMANCE.md) and [docs/reports/](docs/reports/) — performance profile and the Playwright HTML report.
-- [docs/DEVELOPMENT_NOTES.md](docs/DEVELOPMENT_NOTES.md) — how the project was built and verified.
+A top-down naval shooter that runs in the browser. You sail between islands, sink Chasers and Shooters before the clock runs out, and your best run goes to a ranking. React draws the menus, PixiJS draws the sea, and the battle itself is a plain TypeScript simulation that neither of them owns.
 
-Quick start (Node.js 20+, pnpm 10):
+**Play it:** https://pirate-battle-nine.vercel.app
+
+![Gameplay: the player's ship sinks enemy ships between islands](docs/media/gameplay.gif)
+
+## Context
+
+I built this for a technical challenge from Jungle Gaming in September 2026. The brief, kept unchanged in [docs/CHALLENGE.md](docs/CHALLENGE.md), asked for a complete game on a fixed stack (React, strict TypeScript, PixiJS, TanStack Query, Axios, MSW, Playwright), a mocked ranking API with failure scenarios, accessibility, a performance report and a public deploy. I didn't make it to the final round. The project stays public because it is the most complete front-end work I can show, and because the parts I would do differently are worth writing down (see [What I would change](#what-i-would-change)).
+
+## What is in it
+
+- **Gameplay:** thrust and rotation, a front cannon and two three-shot broadsides, two enemy types (a Chaser that rams you, a Shooter that keeps its distance and fires when it has line of sight), islands that block ships and cannonballs, a new island layout generated from each match's seed, automatic pause when the tab loses focus.
+- **Ranking and match history** served by an MSW mock API that also runs in the published build, with 14 network scenarios (slow, jitter, out-of-order, timeout, 4xx/5xx, a submission that times out after being stored, and others). Submissions are idempotent by match id and survive a page refresh.
+- **Desktop and mobile:** keyboard, optional mouse steering, touch buttons. In portrait the arena rotates 90° so it stays fully visible.
+- **Extras beyond the brief** ([EXTRAS.md](EXTRAS.md)): coins, XP and levels, a Shipyard with hulls, cannons and upgrades, four interface languages. They are opt-in or leave the required rules untouched.
+
+| Menu | Battle | Mobile (landscape, touch) |
+| --- | --- | --- |
+| ![Main menu](docs/media/menu.jpg) | ![Battle](docs/media/battle.jpg) | ![Mobile battle with touch controls](docs/media/mobile-battle.jpg) |
+
+## Technical decisions
+
+**The simulation owns the battle.** `MatchSimulation` ([src/game/core/simulation.ts](src/game/core/simulation.ts)) has no Pixi or React imports. It advances in fixed 1/60 s steps from an accumulator, so movement, cooldowns and spawns don't depend on frame rate, and the same seed with the same inputs produces the same match. Pixi reads the simulation each frame and draws it; React never sees a frame.
+
+**React re-renders about once per second.** The runtime publishes a small HUD snapshot through `useSyncExternalStore` and only notifies when something React shows actually changes (whole seconds, score, health, status). Score, time and health are drawn in the canvas; a visually hidden copy with a polite live region serves screen readers and the tests.
+
+**All balance numbers live in one typed config.** [gameplayConfig.ts](src/game/config/gameplayConfig.ts) holds speeds, damage, cooldowns, spawn rules and ranges. Options and Shipyard upgrades produce a modified copy when a match starts, so changing either never touches a running battle or the systems' code.
+
+**Resource lifecycle is explicit.** One Pixi `Application` per match, destroyed on exit together with the ticker, listeners and pooled sprites. React Strict Mode's double mount is handled by a `disposed` flag checked after the async `init`. Atlases stay cached in `Assets`, so restarting doesn't re-upload textures. After five start/play/leave cycles the JS heap converges around 10.8 MB ([docs/PERFORMANCE.md](docs/PERFORMANCE.md)).
+
+**Submissions go through TanStack Query, not around it.** Each submission runs in a `MutationObserver` scoped to its match id, with a single in-flight promise per id, a pending queue in `localStorage`, and retries on startup and on demand. List queries are cancelled before invalidation, so a late response can't overwrite a newer one.
+
+**Tests drive the real game.** With `?test=1&clock=manual` the app exposes a small test API that presses the same controls a player uses and advances the clock by hand. Playwright uses it to check movement, collisions, damage, cooldowns, spawns, pause and match end deterministically, alongside the UI flows, visual baselines and an axe-core audit.
+
+Longer write-ups: [ARCHITECTURE.md](ARCHITECTURE.md), [SOLUTION.md](SOLUTION.md) (setup, controls, network scenarios, reproducing failures) and [docs/DEVELOPMENT_NOTES.md](docs/DEVELOPMENT_NOTES.md) (how it was built, bugs found in play-testing and review).
+
+## Running it
+
+Requirements: Node.js 20+ and pnpm 10 (`corepack enable` picks the version pinned in `package.json`).
 
 ```bash
 pnpm install
-pnpm exec playwright install chromium   # only for the end-to-end suite
-pnpm dev          # http://localhost:5173
-pnpm build        # type-check + optimized build in dist/
-pnpm preview      # serve the build on http://localhost:4173
-pnpm lint         # ESLint
-pnpm typecheck    # tsc
-pnpm test:e2e     # Playwright (desktop + mobile Chromium, builds and serves the app itself)
-pnpm test:report  # open the last HTML report
+pnpm dev            # http://localhost:5173
+pnpm build          # type-check + production build in dist/
+pnpm preview        # serves dist/ on http://localhost:4173
+pnpm lint
+pnpm typecheck
 ```
 
-Environment variables are optional (`.env.example`): `VITE_API_BASE_URL` (empty so MSW intercepts `/api`) and `VITE_PLAYER_NAME`. Keyboard: `W`/`↑` sail, `A`/`D` or `←`/`→` turn, `Space` front cannon, `Q`/`E` broadsides, `Esc`/`P` pause; touch buttons on mobile (landscape). Network scenarios: **Network simulator** in the main menu or `?scenario=<id>`; **Reset** restores the initial state.
+There is no backend and no required environment variable: the mock API runs in the browser. `.env.example` lists the two optional ones.
 
----
+Controls: `W`/`↑` sail, `A`/`D` or `←`/`→` turn, `Space` front cannon, `Q`/`E` broadsides, `Esc`/`P` pause. Touch buttons show up on touch devices (or with `?touch=1`).
 
-# Desafio React & Pixi JS — Pirate Battle
+## Tests
 
-Desenvolva um **shooter naval 2D com visão superior** usando React, TypeScript e PixiJS. O jogador deve navegar entre ilhas, enfrentar navios inimigos e acumular pontos até o fim da partida.
+```bash
+pnpm test:unit                            # Vitest: simulation rules, arena generator, progression
+pnpm exec playwright install chromium     # once
+pnpm test:e2e                             # builds, serves and runs the Playwright suite
+pnpm test:report                          # opens the HTML report
+```
 
-O desafio avalia gameplay, domínio de PixiJS, arquitetura, integração de dados, experiência de uso e qualidade da entrega. Informe sua estimativa de prazo antes de iniciar.
+| Suite | Size | Where it runs |
+| --- | --- | --- |
+| Unit (Vitest) | 216 tests in 3 files (200 are one check per arena seed), under 1 s. `pnpm test:unit:coverage` reports coverage for `src/game/core` and progression | CI and locally |
+| End-to-end (Playwright) | 202 tests in 17 files: 101 specs × desktop and mobile Chromium, 2 skipped by design (touch-only). About 17 min locally with 3 workers | CI (one job per project) and locally |
+| Visual regression | 3 screens × 2 viewports, baselines in `e2e/__screenshots__/` | Locally. The baselines were recorded on macOS and Linux rasterizes fonts and WebGL differently, so CI runs with `--ignore-snapshots` |
+| Accessibility | axe-core, WCAG 2.0/2.1 A and AA, every screen and dialog | Inside the Playwright suite |
 
-## 1. Stack obrigatória
+CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs lint, typecheck, unit tests, build and both Playwright projects, and uploads the HTML report and failure traces as artifacts.
 
-| Responsabilidade | Tecnologia |
+## Numbers
+
+| What | Result |
 | --- | --- |
-| Interface e menus | React |
-| Linguagem | TypeScript em modo estrito |
-| Renderização do jogo | PixiJS |
-| Estado remoto do ranking e do histórico | TanStack Query |
-| Cliente HTTP do ranking e do histórico | Axios |
-| Mocking das APIs de ranking e histórico | MSW |
-| Testes E2E e regressão visual | Playwright |
-
-Todas as tecnologias devem participar efetivamente da solução. A ferramenta de build, a estilização e as bibliotecas complementares ficam a critério do candidato.
-
-O jogo é single-player e deve funcionar integralmente no navegador. Gameplay e configurações são locais. Ranking e histórico de partidas usam APIs REST simuladas com MSW, consumidas por Axios e TanStack Query.
-
-## 2. Gameplay
-
-### Jogador
-
-- Movimentação para a frente e rotação para os dois lados.
-- Disparo frontal com um projétil.
-- Disparo lateral com três projéteis paralelos, com comandos para o lado esquerdo e o direito do navio.
-- Vida limitada, reduzida por projéteis inimigos e pelo impacto de um Chaser.
-- Movimentação restrita à arena visível, sem atravessar ilhas.
-
-Defina controles de teclado e controles de toque para movimento, rotação e ataques. Permita movimentar e disparar simultaneamente. Apresente os comandos na interface.
-
-### Inimigos
-
-| Tipo | Comportamento |
-| --- | --- |
-| **Chaser** | Persegue o jogador, causa dano ao colidir com seu navio e explode no impacto |
-| **Shooter** | Aproxima-se do jogador e dispara quando estiver dentro do alcance de ataque |
-
-Ambos devem avançar, rotacionar, receber dano e respeitar as colisões com ilhas. Os dois tipos precisam aparecer durante uma partida padrão.
-
-Inimigos surgem a cada intervalo configurado até o encerramento da partida. Os pontos de spawn devem estar livres de obstáculos e suficientemente afastados do jogador para evitar dano imediato inevitável.
-
-### Arena, colisões e combate
-
-- A arena deve conter água e pelo menos uma ilha que bloqueie navios e projéteis.
-- Projéteis devem respeitar direção, velocidade, dano e alcance ou tempo de vida.
-- Disparos do jogador atingem inimigos; disparos inimigos atingem o jogador.
-- Cada projétil deve aplicar dano uma única vez e ser removido ao atingir um alvo ou obstáculo, expirar ou sair da arena.
-- Cada arma deve respeitar seu intervalo entre disparos.
-- Inimigos destruídos deixam de causar dano, disparar e participar das colisões.
-
-### Regras da partida
-
-- Duração configurável entre **60 e 180 segundos** de jogo ativo.
-- Cada inimigo destruído pelos ataques do jogador vale **1 ponto**. A autodestruição de um Chaser contra o jogador não pontua.
-- A partida termina quando o tempo acaba ou a vida do jogador chega a zero.
-- O encerramento interrompe movimento, ataques, dano, spawns e contagem de pontos.
-- Reiniciar deve criar uma nova partida, com vida, pontuação, cronômetro e entidades restaurados.
-
-Exiba vida acima do navio do jogador e de cada inimigo. O HUD deve apresentar também pontuação e tempo restante.
-
-Implemente pausa manual e automática ao perder o foco ou ocultar a aba. Durante a pausa, cronômetro, cooldowns e simulação ficam suspensos. A retomada exige uma ação do jogador e não pode acumular movimento ou disparos do período pausado.
-
-### Animações e feedback
-
-Implemente efeitos de disparo, explosão de destruição e deterioração visual dos navios conforme a vida restante. Ataques, impactos e dano devem ter feedback perceptível, mantendo a leitura da arena.
-
-## 3. Telas e configurações
-
-| Tela | Requisitos |
-| --- | --- |
-| Menu principal | Ações **Play** e **Options**, instruções de controle e abas **Ranking** e **Match History** |
-| Options | **Game session time** e **Enemy spawn time**, com validação, salvamento e persistência após refresh |
-| Partida | Arena PixiJS, HUD, controles e pausa |
-| Resultado | Pontuação total, tempo jogado, motivo do encerramento, situação do registro da partida e ações **Play Again** e **Main Menu** |
-| Ranking | Classificação, identificação dos jogadores, pontuação e paginação |
-| Match History | Histórico do jogador, com data, pontuação, duração, motivo do encerramento e paginação |
-
-Centralize os parâmetros de gameplay em uma configuração tipada e ajustável: duração, intervalo e distribuição dos spawns, vida, velocidades de movimento e rotação, dano, alcance, velocidade e duração dos projéteis, cooldowns e alcance do Shooter. Mudanças de balanceamento não devem exigir alterações na lógica dos sistemas.
-
-A tela Options deve expor os dois parâmetros indicados. O intervalo de spawn deve ser positivo e ter limites documentados. Cada partida utiliza um snapshot da configuração vigente ao iniciar; alterações posteriores valem para novas partidas.
-
-Recarregar a página ou sair da tela de combate encerra a partida em andamento. Persista localmente as opções do jogador e o resultado da última partida concluída. Uma partida abandonada não é registrada no ranking nem no histórico.
-
-Interface, identificadores de código e documentação da solução devem estar em inglês. A identidade visual dos menus fica a seu critério e deve ser coerente com os assets do jogo.
-
-## 4. PixiJS e arquitetura
-
-Use PixiJS para arena, navios, projéteis, efeitos e indicadores sobre os navios. Use React nos menus, formulários, painéis e diálogos.
-
-A solução deve demonstrar:
-
-- separação entre regras do jogo, renderização, input e estado da interface;
-- simulação baseada em tempo, com movimento, dano e spawns independentes da taxa de quadros;
-- sincronização da interface com o jogo sem renderizações React a cada frame;
-- carregamento e reutilização de texturas, com tratamento de falhas antes de iniciar o combate;
-- ajuste do canvas à tela e à densidade de pixels, preservando proporções, coordenadas de input e limites da arena;
-- liberação de listeners, ticker, timers, entidades e recursos ao sair ou reiniciar;
-- inicialização e desmontagem corretas também com React Strict Mode.
-
-O estado contínuo do combate deve permanecer na simulação. A estratégia de gerenciamento de estado e de sincronização com a interface fica a critério do candidato.
-
-As regras de movimentação, combate, colisões e comportamento dos inimigos devem ser implementadas pelo candidato. A organização interna é livre; descreva as principais decisões em `ARCHITECTURE.md`.
-
-## 5. Ranking e histórico de partidas
-
-Implemente as abas **Ranking** e **Match History** no menu principal, com contratos tipados para os seguintes recursos:
-
-| Recurso | Operações mínimas |
-| --- | --- |
-| Ranking | Consultar classificação paginada, ordenada por pontuação |
-| Histórico | Registrar uma partida concluída e consultar o histórico paginado do jogador |
-
-Cada registro deve conter identificação da partida e do jogador, data, pontuação, duração efetiva, motivo do encerramento e configuração usada. Compare no ranking partidas com a mesma configuração e adote um critério determinístico de desempate. Outros jogadores são representados por fixtures.
-
-Use **Axios** nas chamadas HTTP e **TanStack Query** nas consultas e no registro de partidas. Gerencie carregamento, vazio, erro, atualização em segundo plano, cache, invalidação e retries. Atualize as duas abas após registrar uma partida e ao voltar a exibi-las. Respostas atrasadas não devem sobrescrever dados mais recentes.
-
-Uma partida concluída deve gerar um único registro no histórico e uma única entrada no ranking. Reenvios e cliques repetidos devem recuperar o registro existente, sem duplicação. Preserve registros pendentes após falhas ou refresh e permita tentar novamente. O jogador deve conseguir iniciar outra partida enquanto houver um registro pendente.
-
-Falhas nessas APIs não devem bloquear o acesso ao jogo, às configurações ou interromper o combate. Essas integrações se limitam ao ranking e ao histórico de partidas.
-
-## 6. Mocking com MSW
-
-Implemente os mocks das APIs de ranking e histórico na camada de rede, compartilhando contratos, fixtures e handlers entre desenvolvimento, testes e demonstração. Registros confirmados devem aparecer nas consultas seguintes, com estado consistente entre as duas abas.
-
-### Simulating Network Conditions and Failures
-
-Disponibilize cenários configuráveis e reproduzíveis para:
-
-- sucesso, listas vazias e múltiplas páginas;
-- lentidão, latência variável e respostas fora de ordem;
-- timeout, falhas de conexão e respostas HTTP 4xx/5xx;
-- falha ao consultar ranking ou histórico;
-- timeout depois de registrar uma partida, com recuperação sem duplicação;
-- indisponibilidade no encerramento da partida e registro após recuperação.
-
-Inclua uma forma de selecionar os cenários e restaurar o estado inicial. Controle aleatoriedade e latência nos testes. Os mocks devem funcionar no build publicado. Use persistência local para manter os registros confirmados e os envios pendentes após refresh.
-
-## 7. Interface, assets e acessibilidade
-
-Os arquivos estão disponíveis em [assets/](assets/): navios, partes de navios, projéteis, efeitos, tiles, sprites de HUD e menus, spritesheets e imagens de referência. Os atlas de interface estão em [ui_sheet.json](assets/spritesheet/ui_sheet.json) e [ui_sheet_retina.json](assets/spritesheet/ui_sheet_retina.json), com recortes, alinhamento e caminhos dos PNGs individuais. Os campos `ui` contêm metadados complementares; suas medidas e as bordas usam unidades lógicas (1×), relativas ao canto superior esquerdo do sprite. Os efeitos sonoros e loops de ambiente estão em [assets/sounds/](assets/sounds/), no formato WAV.
-
-Utilize os assets fornecidos como base visual. Conversão de atlas, otimização de imagens e recursos complementares são permitidos; inclua as fontes e licenças correspondentes na entrega.
-
-A interface e o jogo devem funcionar em desktop e mobile, com controles de toque utilizáveis e sem cortes na arena ou no HUD. Defina a orientação suportada no mobile e adapte o layout à mudança de tamanho sem alterar as regras da partida.
-
-O carregamento dos assets da partida deve ter progresso ou estado de carregamento visível.
-
-Garanta navegação por teclado nos menus, foco visível, controle de foco em diálogos, labels, contraste adequado e mensagens de erro acessíveis. Disponibilize pontuação, tempo e estado da partida também em uma interface semântica; evite anúncios a cada frame. As teclas do jogo só devem ser capturadas enquanto o contexto de gameplay estiver ativo.
-
-## 8. Testes com Playwright
-
-Entregue testes E2E cobrindo:
-
-1. Navegação, validação e persistência das opções.
-2. Carregamento dos assets, falhas e nova tentativa.
-3. Início de partida, movimento, rotação, limites da arena e colisão com ilhas.
-4. Disparos frontal e lateral, dano, cooldown e pontuação sem duplicação.
-5. Comportamentos de Chaser e Shooter e intervalo de spawn.
-6. Encerramento por tempo e por morte, interrupção da simulação e reinício limpo.
-7. Pausa, perda de foco e retomada sem avanço indevido do cronômetro.
-8. Exibição do resultado e sua persistência após refresh.
-9. Abandono da partida, navegação repetida entre telas e controles de toque.
-10. Consulta e paginação das abas Ranking e Match History, incluindo carregamento, vazio e erro.
-11. Registro da partida, atualização das duas abas e recuperação de envio pendente após refresh.
-12. Reenvio após timeout sem duplicação e respostas atrasadas sem sobrescrever dados recentes.
-
-Execute os fluxos principais em Chromium, em desktop e mobile. Inclua regressão visual do menu, da arena em um estado estável e da tela de resultado, com baselines versionadas.
-
-Use cenários com seed e controle do tempo da simulação para tornar os testes reproduzíveis. A instrumentação de teste pode observar o estado e controlar o relógio, preservando a execução real das regras, inputs, colisões e renderização. Os testes de combate devem acionar controles do jogo e verificar seus efeitos.
-
-Cada teste deve partir de um estado isolado. Entregue relatório HTML e traces das falhas.
-
-## 9. Performance do jogo
-
-Avalie a performance do combate em build otimizado, com **60 FPS como alvo** no ambiente de referência documentado. Registre taxa de quadros, percentil 95 do tempo entre frames e quantidade de entidades em uma partida de três minutos.
-
-Verifique o uso de memória após cinco ciclos de iniciar, jogar e sair, investigando crescimento contínuo de recursos. Entregue evidências de profiling com hardware, navegador, resolução, configuração da partida e limitações observadas.
-
-## 10. Critérios de avaliação
-
-| Critério | Pontos |
-| --- | ---: |
-| Gameplay, regras, colisões e comportamento dos inimigos | 35 |
-| PixiJS, arquitetura e ciclo de vida dos recursos | 20 |
-| Interface, feedback, responsividade e acessibilidade | 15 |
-| TanStack Query, Axios e consistência do ranking e histórico | 10 |
-| MSW e cenários de falha | 5 |
-| Testes com Playwright | 10 |
-| Performance e documentação | 5 |
-| **Total** | **100** |
-
-Serão considerados o funcionamento completo da partida, a clareza das responsabilidades, a qualidade do código e a execução reproduzível. O console deve permanecer sem erros não tratados durante os fluxos previstos.
-
-## 11. Entrega
-
-Entregue o repositório com código-fonte, lockfile, assets, mocks, fixtures e testes.
-
-O **deploy é obrigatório**. Envie uma URL pública e funcional do jogo. Recomenda-se [Vercel](https://vercel.com/); [Netlify](https://www.netlify.com/) e [Cloudflare Pages](https://pages.cloudflare.com/) também são aceitos.
-
-A versão publicada deve corresponder ao código entregue, permanecer funcional e acessível durante a avaliação e executar os mocks de ranking e histórico. O jogo deve funcionar ao abrir ou recarregar a URL publicada.
-
-O `README.md` da solução deve incluir setup, variáveis de ambiente, controles, configuração de gameplay, seleção e reset dos cenários de rede, comandos e instruções para reproduzir falhas. Disponibilize comandos para desenvolvimento, build, preview, lint, verificação de tipos e Playwright.
-
-Documente em `ARCHITECTURE.md` a integração React/PixiJS, o ciclo da simulação, colisões, gerenciamento de recursos, persistência local e integração do ranking e histórico, incluindo contratos, cache e recuperação de registros pendentes. Registre limitações e decisões de balanceamento.
-
-Inclua os relatórios de testes e profiling. A solução deve executar a partir de um checkout limpo, sem depender de serviços privados.
+| 3-minute battle, production build, MacBook Air M3, DPR 2 | 60 FPS average, p95 frame time 17.6 ms, peak 11 entities ([report](docs/PERFORMANCE.md)) |
+| JS heap after 5 start/play/leave cycles | 9.9 → 10.8 MB, with shrinking increments |
+| Lighthouse, deployed build (mobile / desktop) | Performance 79 / 98, Accessibility 94, Best practices 100. With the lazy-loaded battle (below), a local mobile run went from 78–80 to 89 |
+| JavaScript before the first screen (gzip) | 291 KB. PixiJS (170 KB) now loads when you press Play instead of on the menu; before that change it was 475 KB. The entry chunk still carries MSW, which a real product wouldn't ship |
+
+## What I would change
+
+- **Too many rules are tested only through the browser.** The simulation is pure and deterministic, yet in the delivery I tested it only through Playwright, one page round-trip at a time; some combat tests take close to a minute. The Vitest specs in `tests/unit/` came later. The better split is most rule checks as unit tests and a thinner E2E layer for UI flows and integration.
+- **One day was too little for this scope.** I built it in one long day, with an AI coding assistant writing most first drafts ([DEVELOPMENT_NOTES](docs/DEVELOPMENT_NOTES.md) says so). The extras (Shipyard, languages, random arenas) took time that should have gone into the required parts and into a readable history.
+- **The commit history doesn't show the process.** Most commits share one timestamp because I reorganized the history before delivering. Small commits made along the way would have told the story better.
+- **Loose ends in the delivery:** the docs pointed to a committed Playwright report that wasn't in the repository, and the asset license notes the brief asked for were missing.
+
+## Project layout
+
+```
+src/
+  game/core/     simulation, collisions, arena generator, navigation grid, steering (no Pixi)
+  game/render/   PixiJS layers: arena, ships, projectiles, effects, HUD
+  game/          runtime (fixed-step loop, pause, clock), input, audio, assets, config, progression
+  ui/            React UI: atoms / molecules / organisms / templates / pages
+  data/          Axios client, contracts, TanStack Query hooks, pending submissions
+  mocks/         MSW handlers, fixtures, in-browser database, network scenarios
+  storage/       validated localStorage adapters
+  testing/       test API and ids shared with Playwright
+e2e/             Playwright specs and visual baselines
+tests/unit/      Vitest specs
+```
+
+## Credits
+
+Game art and sound effects came with the challenge brief (`assets/`); `pnpm assets:build` packs them into the atlases and audio in `public/assets/`. Code by David Daniel.
