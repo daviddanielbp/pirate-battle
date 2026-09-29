@@ -89,9 +89,9 @@ O CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) roda lint, typecheck
 
 - **Muita regra testada só pelo navegador.** A simulação é pura e determinística, mas na entrega eu testei tudo via Playwright, uma ida e volta à página por vez; alguns testes de combate levam quase um minuto. Os testes com Vitest em `tests/unit/` vieram depois. A divisão certa é a maior parte das regras em teste unitário e uma camada E2E mais fina para fluxos de interface e integração.
 - **Um dia foi pouco para esse escopo.** Construí tudo num dia longo, com um assistente de IA escrevendo a maior parte dos primeiros rascunhos (o [DEVELOPMENT_NOTES](docs/DEVELOPMENT_NOTES.md) registra isso). Os extras (Estaleiro, idiomas, arenas aleatórias) consumiram tempo que deveria ter ido para as partes obrigatórias e para um histórico legível.
-- **O histórico de commits não mostra o processo.** A maioria dos commits tem o mesmo horário porque reorganizei o histórico antes de entregar. Commits pequenos feitos ao longo do trabalho contariam a história melhor.
+- **O histórico de commits não mostra o processo.** São poucos commits grandes; commits pequenos feitos ao longo do trabalho contariam a história melhor.
 - **Pontas soltas na entrega:** a documentação apontava para um relatório do Playwright que não estava no repositório, e faltaram as notas de licença dos assets que o enunciado pedia.
 
 ## Créditos
 
-A arte e os efeitos sonoros vieram junto com o enunciado do desafio (`assets/`); `pnpm assets:build` empacota esses arquivos nos atlas e áudios de `public/assets/`. Código de David Daniel.
+A arte e os efeitos sonoros foram fornecidos pela Jungle Gaming junto com o enunciado do desafio (`assets/`) e pertencem a ela; não estão cobertos pela licença do código. `pnpm assets:build` empacota esses arquivos nos atlas e áudios de `public/assets/`. Código de David Daniel.

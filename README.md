@@ -89,7 +89,7 @@ CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs lint, typecheck, 
 
 - **Too many rules are tested only through the browser.** The simulation is pure and deterministic, yet in the delivery I tested it only through Playwright, one page round-trip at a time; some combat tests take close to a minute. The Vitest specs in `tests/unit/` came later. The better split is most rule checks as unit tests and a thinner E2E layer for UI flows and integration.
 - **One day was too little for this scope.** I built it in one long day, with an AI coding assistant writing most first drafts ([DEVELOPMENT_NOTES](docs/DEVELOPMENT_NOTES.md) says so). The extras (Shipyard, languages, random arenas) took time that should have gone into the required parts and into a readable history.
-- **The commit history doesn't show the process.** Most commits share one timestamp because I reorganized the history before delivering. Small commits made along the way would have told the story better.
+- **The commit history doesn't show the process.** It has a few large commits; small commits made along the way would have told the story better.
 - **Loose ends in the delivery:** the docs pointed to a committed Playwright report that wasn't in the repository, and the asset license notes the brief asked for were missing.
 
 ## Project layout
@@ -110,4 +110,4 @@ tests/unit/      Vitest specs
 
 ## Credits
 
-Game art and sound effects came with the challenge brief (`assets/`); `pnpm assets:build` packs them into the atlases and audio in `public/assets/`. Code by David Daniel.
+Game art and sound effects were provided by Jungle Gaming with the challenge brief (`assets/`) and belong to them; they are not covered by the code license. `pnpm assets:build` packs them into the atlases and audio in `public/assets/`. Code by David Daniel.
