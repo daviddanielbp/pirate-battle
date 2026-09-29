@@ -16,10 +16,13 @@ export default defineConfig({
   build: {
     target: 'es2022',
     sourcemap: false,
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        advancedChunks: {
+        codeSplitting: {
           groups: [
+            // Keep Vite's preload helper out of the lazy PixiJS chunk, otherwise the entry
+            // imports it from there and the whole engine is preloaded on the menu.
+            { name: 'preload-helper', test: /vite[\\/]preload-helper/ },
             { name: 'pixi', test: /node_modules[\\/]pixi\.js/ },
             { name: 'vendor', test: /node_modules[\\/](react|react-dom|scheduler|@tanstack|axios)[\\/]/ },
           ],
