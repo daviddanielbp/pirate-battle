@@ -5,7 +5,7 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'playwright-report', 'test-results', 'public/mockServiceWorker.js', 'docs/reports'] },
+  { ignores: ['dist', 'coverage', 'playwright-report', 'test-results', 'public/mockServiceWorker.js', 'docs/reports'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     files: ['**/*.{ts,tsx}'],
